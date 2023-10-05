@@ -1,0 +1,259 @@
+{ config, pkgs, lib, ... }:
+
+let
+ unstable = import <nixos-unstable> { config = { allowUnfree = true; }; };
+in
+
+{
+imports =
+  [ # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+    ./suspend-and-hibernate.nix
+    ./network.nix
+    ./x11.nix # gnome 
+    ./hyprland
+    ./medivation.nix
+    # ./tuxedo.nix
+  ];
+
+  # acpid
+  services.acpid = {
+    enable = true;
+  };
+
+# Bootloader.
+boot.loader.systemd-boot.enable = true;
+boot.loader.efi.canTouchEfiVariables = true;
+environment.systemPackages = with pkgs; [
+  (python310.withPackages(ps: with ps; [ 
+     pandas
+     numpy
+     (callPackage ./conan_tools.nix { })
+   ]))
+  (callPackage ./conan_1.60.2.nix { })
+ ];
+
+# Setup keyfile
+boot.initrd.secrets = {
+  "/crypto_keyfile.bin" = null;
+};
+
+# Enable swap on luks
+boot.initrd.luks.devices."luks-18911171-72fb-4967-82f8-161b16b6432a".device = "/dev/disk/by-uuid/18911171-72fb-4967-82f8-161b16b6432a";
+boot.initrd.luks.devices."luks-18911171-72fb-4967-82f8-161b16b6432a".keyFile = "/crypto_keyfile.bin";
+
+# Set your time zone.
+time.timeZone = "Europe/Zurich";
+# Select internationalisation properties.
+i18n.defaultLocale = "en_US.UTF-8";
+
+# Configure console keymap
+console = {
+  useXkbConfig = true;
+};
+
+# Map CapsLock to Esc on single press and Ctrl on when used with multiple keys.
+services.interception-tools = {
+  enable = true;
+  plugins = [ pkgs.interception-tools-plugins.caps2esc ];
+  udevmonConfig = ''
+    - JOB: "${pkgs.interception-tools}/bin/intercept -g $DEVNODE | ${pkgs.interception-tools-plugins.caps2esc}/bin/caps2esc | ${pkgs.interception-tools}/bin/uinput -d $DEVNODE"
+      DEVICE:
+        EVENTS:
+          EV_KEY: [KEY_CAPSLOCK, KEY_ESC]
+  '';
+};
+
+
+# Enable CUPS to print documents.
+services.printing.enable = true;
+
+# Enable sound with pipewire.
+sound.enable = true;
+hardware.pulseaudio.enable = false;
+security.rtkit.enable = true;
+services.pipewire = {
+  enable = true;
+  alsa.enable = true;
+  alsa.support32Bit = true;
+  pulse.enable = true;
+  # If you want to use JACK applications, uncomment this
+  #jack.enable = true;
+
+  # use the example session manager (no others are packaged yet so this is enabled by default,
+  # no need to redefine it in your config for now)
+  #media-session.enable = true;
+  };
+
+# Add docker support
+virtualisation.docker.enable = true;
+
+programs.nix-ld.enable = true;
+services.upower.enable = true;
+services.devmon.enable = true;
+services.gvfs.enable = true;
+services.udisks2.enable = true;
+
+# Allow unfree packages
+nixpkgs.config.allowUnfree = true;
+
+nix = {
+  package = pkgs.nixFlakes;
+  extraOptions = ''
+  experimental-features = nix-command flakes
+'';
+};
+
+# Change default shell
+users.defaultUserShell = pkgs.zsh;
+programs.zsh.enable = true;
+environment.shells = with pkgs; [ zsh ];
+
+# Define a user account. Don't forget to set a password with ‘passwd’.
+users.users.marc = {
+  isNormalUser = true;
+  description = "Hans Ruedi";
+  extraGroups = [ "networkmanager" "wheel" "docker" "storage" ];
+  packages = with pkgs; [
+
+# Storage
+cifs-utils
+
+# Frontend for wayland 
+kanshi #autorandr for wayland
+wl-clipboard #clipboard for wayland
+wev # wayland event viewer
+wdisplays # wayland version of arandr
+wlr-randr # wayland xrandr
+wlrctl # Command line utility for miscellaneous wlroots Wayland extensions
+
+# audio
+alsa-utils # provides amixer/alsamixer/...
+playerctl # Command-line utility and library for controlling media players that implement MPRIS
+mpd # for playing system sounds
+mpc-cli # command-line mpd client
+ncmpcpp # a mpd client with a UI
+networkmanagerapplet # provide GUI app: nm-connection-editor
+
+# Development tools
+vscode
+git
+gitg
+gitkraken
+gimp
+docker
+docker-compose
+pandoc
+rpi-imager
+gparted
+meld
+glxinfo
+kooha
+jetbrains-toolbox
+shell_gpt
+unstable.jetbrains.clion
+dpkg
+
+# Development environment 
+acpid # A daemon for delivering ACPI events to userspace programs
+nodejs
+patchelf
+steam-run
+stdenv
+xvfb-run
+fuse
+pmutils # A small collection of scripts that handle suspend and resume on behalf of HAL
+
+## CPP
+cmake
+gdb
+gcc
+gnumake
+doxygen
+
+## Conan build stuff -- may not be needed :)
+om4
+gnum4
+autoconf
+autoreconfHook
+libtool
+
+## Qt 
+qtcreator
+qt5.full
+qt6.full
+
+# Power management testing
+powertop
+stress
+geekbench_5
+
+## Androie tools
+android-tools
+android-studio
+scrcpy
+
+# Terminal 
+kitty
+zsh
+neofetch
+trash-cli
+killall
+neovim
+s-tui
+htop
+tree
+zip
+unzip
+xclip
+toybox
+jq # A lightweight and flexible command-line JSON processor
+socat
+
+# Generla stuff
+google-chrome
+firefox
+_1password-gui
+obsidian
+discord
+spotify
+slack
+libreoffice
+drawio
+gnome.nautilus
+cinnamon.nemo-with-extensions
+evince # default gnome pdf viewer
+udisks # automount usb sticks
+
+# Naviswiss 
+## Naviplan workflow dependencies
+paraview
+flatbuffers
+flatcc
+];
+};
+
+
+nixpkgs.config.permittedInsecurePackages = [
+  "nodejs-14.21.3"
+  "openssl-1.1.1u"
+  "electron-13.6.9"
+  "qtwebkit-5.212.0-alpha4"
+];
+
+# Fonts. Corefonts contain the webdings fonts needed by some Medivation documents, like the risk analysis 
+fonts.fonts = with pkgs; [
+  nerdfonts
+  corefonts
+];
+
+
+# This value determines the NixOS release from which the default
+# settings for stateful data, like file locations and database versions
+# on your system were taken. It‘s perfectly fine and recommended to leave
+# this value at the release version of the first install of this system.
+# Before changing this value read the documentation for this option
+# (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
+system.stateVersion = "23.05"; # Did you read the comment?
+
+}

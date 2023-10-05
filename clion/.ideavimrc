@@ -1,0 +1,20 @@
+
+""" ---- Search settings ----
+set ignorecase smartcase
+set incsearch                     " show search results while typing
+set wrapscan                      " searches wrap around the end of the file
+
+""" ---- General settings ----
+" Show a few lines of context around the cursor. Note that this makes the
+ 
+:set timeout timeoutlen=250 ttimeoutlen=100 	" reduce time between shortcut and execution
+
+set scrolloff=5 " keep some lines before and after the cursor visible
+let mapleader = " " 		  " set <leader> to <space>
+map <leader>vr :source ~/.ideavimrc<CR>
+map <leader>f :action CollapseRegionRecursively<CR>
+map <leader>o :action ExpandRegionRecursively<CR>
+map <leader>j :action Back<CR>
+map <leader>l :action Forward<CR>
+
+
