@@ -10,9 +10,9 @@ imports =
     ./hardware-configuration.nix
     ./suspend-and-hibernate.nix
     ./network.nix
-    ./x11.nix # gnome 
-    ./hyprland
-    ./medivation.nix
+    ./gnome.nix
+    # ./hyprland.nix
+    ./medivation.nix # symlink from private repo!!
     # ./tuxedo.nix
   ];
 

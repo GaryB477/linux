@@ -28,10 +28,6 @@
       wlogout # logout menu
       wl-clipboard # copying and pasting
       wf-recorder # creen recording
-      grim # taking screenshots
-      slurp # selecting a region to screenshot
-      mako # the notification daemon, the same as dunst
-      yad # a fork of zenity, for creating dialogs
 
       upower # Waybar applets
       gnome.gnome-power-manager # Waybar applets

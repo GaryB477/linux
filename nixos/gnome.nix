@@ -20,6 +20,7 @@
 
   users.users.marc = {
     packages = with pkgs; [
+      wofi # rofi, but wofi cus wayland :shrug:k
 
       # Frontend for X11 
       gnome3.gnome-tweaks
@@ -33,6 +34,12 @@
       xorg.xhost
       polkit
 
+      # Wayland
+      wofi # rofi, but wofi cus wayland :shrug:k
+      grim # taking screenshots
+      slurp # selecting a region to screenshot
+      mako # the notification daemon, the same as dunst
+      yad # a fork of zenity, for creating dialogs
     ];
   };
 }
