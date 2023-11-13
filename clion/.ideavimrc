@@ -3,18 +3,44 @@
 set ignorecase smartcase
 set incsearch                     " show search results while typing
 set wrapscan                      " searches wrap around the end of the file
+set clipboard+=unnamed            " use system clipboard
+set clipboard+=ideaput
 
 """ ---- General settings ----
 " Show a few lines of context around the cursor. Note that this makes the
  
 :set timeout timeoutlen=250 ttimeoutlen=100 	" reduce time between shortcut and execution
 
-set scrolloff=5 " keep some lines before and after the cursor visible
-let mapleader = " " 		  " set <leader> to <space>
-map <leader>vr :source ~/.ideavimrc<CR>
+""" ---- Mappings
+set scrolloff=10                  " keep some lines before and after the cursor visible
+let mapleader = " " 	  	      " set <leader> to <space>
+
+"map <leader>vs :source ~/.ideavimrc<CR>
+map <leader>vs :e ~/.ideavimrc<CR>
+
 map <leader>f :action CollapseRegionRecursively<CR>
+map <leader>ff :action CollapseAllRegions<CR>
 map <leader>o :action ExpandRegionRecursively<CR>
+
+map <leader>i :action GotoImplementation<CR>
 map <leader>j :action Back<CR>
-map <leader>l :action Forward<CR>
+map <leader>k :action Forward<CR>
+
+map <leader>d <Action>(Debug)
+map <leader>r <Action>(RenameElement)
+map <leader>c <Action>(Stop)
+map <leader>z <Action>(ToggleDistractionFreeMode)
+
+""" --- Tab / split movement
+map <leader>v <Action>(MoveTabRight)
+map <leader>vv <Action>(UnsplitAll)
+map <leader>h <Action>(NextSplitter)
+"map <leader>h <Action>(NextTab)
+map <leader>l <Action>(PrevSplitter)
 
 
+map <leader>s <Action>(SelectInProjectView)
+map <leader>fh <Action>(Vcs.ShowTabbedFileHistory)
+map <S-Space> <Action>(GotoNextError)
+
+map <leader>b <Action>(ToggleLineBreakpoint)
