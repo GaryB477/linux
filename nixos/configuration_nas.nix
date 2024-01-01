@@ -1,6 +1,3 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { config, pkgs, ... }:
 
@@ -14,18 +11,35 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  networking.hostName = "nixos"; # Define your hostname.
+  # Configure RAID
+  boot.swraid = {
+    enable = true; 
+    mdadmConf = ''
+      # automatically tag new arrays as belonging to the local system
+      HOMEHOST <system>
 
-  # The raid was created with mdadm using this command:
-  # sudo mdadm --create /dev/md0 --level=1 --raid-devices=2 /dev/sda /dev/sdb
-  # Note: check the sdX values to ensure the correct deviecs are selected when creating!
+      # instruct the monitoring daemon where to send mail alerts
+      MAILADDR root
+
+      # definitions of existing MD arrays
+      ARRAY /dev/md0 level=raid1 num-devices=2 metadata=1.2 name=nixos:0 UUID=d407dcf9:a838fed1:09f83e48:a8f28456
+    '';
+  };
+
+  # Mount the raid disk
   fileSystems."/home/marc/raid" =
-    { device = "/dev/md0";
-      fsType = "ext4";
-    };
-
+     { 
+       device = "/dev/md0";
+       fsType = "ext4";
+       options = [
+          "rw"
+          "users"
+          "x-systemd.automount"
+       ];
+     };
 
   # Enable networking
+  networking.hostName = "nixos"; # Define your hostname.
   networking.networkmanager.enable = true;
 
   # Set your time zone.
