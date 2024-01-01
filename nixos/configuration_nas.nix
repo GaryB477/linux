@@ -27,7 +27,7 @@
   };
 
   # Mount the raid disk
-  fileSystems."/home/marc/raid" =
+  fileSystems."/raid" =
      { 
        device = "/dev/md0";
        fsType = "ext4";
@@ -41,6 +41,11 @@
   # Enable networking
   networking.hostName = "nixos"; # Define your hostname.
   networking.networkmanager.enable = true;
+  networking.firewall = {
+    enable = true;
+    allowedTCPPorts = [ 563 30055 ];
+    allowedUDPPorts = [ 563 30055 ];
+  };
 
   # Set your time zone.
   time.timeZone = "Europe/Zurich";
@@ -65,7 +70,7 @@
   users.users.marc = {
     isNormalUser = true;
     description = "Marc Röthlisberger";
-    extraGroups = [ "networkmanager" "wheel" "docker" ];
+    extraGroups = [ "networkmanager" "wheel" "docker" "media" ];
 
   packages = with pkgs; [
 
@@ -91,27 +96,44 @@
   ];
   };
 
- 
+  # port 8989 
   services.sonarr = {
     enable = true;
     openFirewall = true;
+    group = "media";
   };
+  # port 7878
   services.radarr = {
     enable = true;
     openFirewall = true;
+    group = "media";
   };
+  # port 6767
   services.bazarr = {
     enable = true;
     openFirewall = true;
+    group = "media";
   };
+  # port 9117
   services.jackett= {
     enable = true;
     openFirewall = true;
+    group = "media";
   };
-  services.plex= {
+  # port 9117
+  # In file "/var/lib/sabnzbd/sabnzbd.ini" change the port from "127.0.0.1 or [::1]" to "0.0.0.0" to enable acces from non-local users (e.g. over networtk)
+  services.sabnzbd = {
+    enable = true;
+    group = "media";
+  };
+  services.plex = {
     enable = true;
     openFirewall = true;
+    group = "media";
   };
+
+  users.groups.media = {};
+  users.groups.media.members = [ "sonarr" "radarr" "bazarr" "jackett" "plex" ];
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
