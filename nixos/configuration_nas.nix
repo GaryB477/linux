@@ -68,11 +68,49 @@
     extraGroups = [ "networkmanager" "wheel" "docker" ];
 
   packages = with pkgs; [
+
+  # System stuff
   vim 
   git
   mdadm
   gparted
+
+  # Usenet and friends
+  ## Services
+  sonarr
+  radarr
+  bazarr
+  jackett
+
+  ## Downloader
+  qbittorrent
+  sabnzbd
+ 
+  ## Streaming
+  plex
   ];
+  };
+
+ 
+  services.sonarr = {
+    enable = true;
+    openFirewall = true;
+  };
+  services.radarr = {
+    enable = true;
+    openFirewall = true;
+  };
+  services.bazarr = {
+    enable = true;
+    openFirewall = true;
+  };
+  services.jackett= {
+    enable = true;
+    openFirewall = true;
+  };
+  services.plex= {
+    enable = true;
+    openFirewall = true;
   };
 
   # Allow unfree packages
