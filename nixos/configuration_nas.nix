@@ -12,31 +12,47 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   # Configure RAID
-  boot.swraid = {
-    enable = true; 
-    mdadmConf = ''
-      # automatically tag new arrays as belonging to the local system
-      HOMEHOST <system>
-
-      # instruct the monitoring daemon where to send mail alerts
-      MAILADDR root
-
-      # definitions of existing MD arrays
-      ARRAY /dev/md0 level=raid1 num-devices=2 metadata=1.2 name=nixos:0 UUID=d407dcf9:a838fed1:09f83e48:a8f28456
-    '';
-  };
+  #boot.swraid = {
+  #  enable = true; 
+  #  mdadmConf = ''
+  #    # automatically tag new arrays as belonging to the local system
+  #    HOMEHOST <system>
+  #
+  #      # instruct the monitoring daemon where to send mail alerts
+  #      MAILADDR root
+  #
+  #      # definitions of existing MD arrays
+  #      ARRAY /dev/md0 level=raid1 num-devices=2 metadata=1.2 name=nixos:0 UUID=d407dcf9:a838fed1:09f83e48:a8f28456
+  #    '';
+  #  };
 
   # Mount the raid disk
-  fileSystems."/raid" =
-     { 
-       device = "/dev/md0";
-       fsType = "ext4";
-       options = [
-          "rw"
-          "users"
-          "x-systemd.automount"
-       ];
-     };
+  #  fileSystems."/raid" =
+  #     { 
+  #       device = "/dev/md0";
+  #       fsType = "ext4";
+  #       options = [
+  #          "rw"
+  #          "users"
+  #          "x-systemd.automount"
+  #       ];
+  #     };
+
+
+  # Setup for LVM
+  # sudo pvcreate /dev/sda
+  # sudo pvcreate /dev/sdb
+  # sudo vgcreate pool /dev/sda /dev/sdb
+  # sudo lvcreate -L 10G pool
+  # sudo lvextend -l +100%FREE /dev/pool
+  # sudo lvrename /dev/pool/lvol0 raid
+  # sudo lvdisplay 
+  # sudo mkfs.ext4 /dev/pool/home
+
+  fileSystems."/raid" = {
+    device = "/dev/pool/raid";
+    fsType = "ext4";
+  };
 
   # Enable networking
   networking.hostName = "nixos"; # Define your hostname.
@@ -79,6 +95,7 @@
   git
   mdadm
   gparted
+  tree
 
   # Usenet and friends
   ## Services
