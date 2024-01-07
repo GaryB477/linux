@@ -5,6 +5,7 @@
   imports =
     [ # Include the results of the hardware scan.
       /etc/nixos/hardware-configuration.nix
+      ./qbittorrent.nix
     ];
 
   # Bootloader.
@@ -136,6 +137,7 @@
   mdadm
   gparted
   tree
+  tailscale
 
   # Usenet and friends
   ## Services
@@ -183,11 +185,21 @@
     enable = true;
     group = "media";
   };
+
+  services.qbittorrent = {
+    enable = true;
+    openFirewall = true;
+    group = "media";
+    port = 8728;
+  };
+
   services.plex = {
     enable = true;
     openFirewall = true;
     group = "media";
   };
+
+  services.tailscale.enable = true;
 
   users.groups.media = {};
   users.groups.media.members = [ "sonarr" "radarr" "bazarr" "jackett" "plex" ];
