@@ -100,8 +100,8 @@
   networking.networkmanager.enable = true;
   networking.firewall = {
     enable = true;
-    allowedTCPPorts = [ 563 30055 ];
-    allowedUDPPorts = [ 563 30055 ];
+    allowedTCPPorts = [ 563 8384 22000 30055 ];
+    allowedUDPPorts = [ 563 22000 21027 30055 ];
   };
 
   # Set your time zone.
@@ -152,6 +152,10 @@
  
   ## Streaming
   plex
+
+  # File synthing
+  syncthing
+
   ];
   };
 
@@ -160,36 +164,42 @@
     enable = true;
     openFirewall = true;
     group = "media";
+    user = "marc";
   };
   # port 7878
   services.radarr = {
     enable = true;
     openFirewall = true;
     group = "media";
+    user = "marc";
   };
   # port 6767
   services.bazarr = {
     enable = true;
     openFirewall = true;
     group = "media";
+    user = "marc";
   };
   # port 9117
   services.jackett= {
     enable = true;
     openFirewall = true;
     group = "media";
+    user = "marc";
   };
   # port 9117
   # In file "/var/lib/sabnzbd/sabnzbd.ini" change the port from "127.0.0.1 or [::1]" to "0.0.0.0" to enable acces from non-local users (e.g. over networtk)
   services.sabnzbd = {
     enable = true;
     group = "media";
+    user = "marc";
   };
 
   services.qbittorrent = {
     enable = true;
     openFirewall = true;
     group = "media";
+    user = "marc";
     port = 8728;
   };
 
@@ -197,6 +207,17 @@
     enable = true;
     openFirewall = true;
     group = "media";
+    user = "marc";
+  };
+
+  services = {
+      syncthing = {
+          enable = true;
+          user = "marc";
+          dataDir = "/home/marc/sync";    # Default folder for new synced folders
+          configDir = "/home/marc/sync/.config/syncthing";   # Folder for Syncthing's settings and keys
+          guiAddress = "0.0.0.0:8384";
+      };
   };
 
   services.tailscale.enable = true;
