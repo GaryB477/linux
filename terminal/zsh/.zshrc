@@ -7,10 +7,21 @@ fi
 
 export ZSH=$HOME/.oh-my-zsh
 ZSH_THEME="powerlevel10k/powerlevel10k"
+
+# Plugin installation:
+
+# autosuggestions --> "git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
+
+# zsh-syntax-highlighting --> "sudo apt install -y zsh-syntax-highlighting && git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting"
+
+# fzf --> "git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && ~/.fzf/install"
+
+# ..
+# then "source ~/.zshrc"
 plugins=(
 	git
 	zsh-autosuggestions
-	zsh-z
+	z
 	zsh-syntax-highlighting)
 source $ZSH/oh-my-zsh.sh
 
@@ -48,5 +59,5 @@ alias "vim"="nvim"
 
 ## Medivation aliases
 alias meditool="(cd /home/marc/tools/MediTool\ V1.2.0 ; ./MediTool.AppImage)"
-alias "cg"="/home/marc/git/dotfiles/nixos/connect_wifi_guest.sh"
-alias "ci"="/home/marc/git/dotfiles/nixos/connect_wifi_inside.sh"
+alias "cg"="/home/marc/private/git/dotfiles_private/nixos/connect_wifi_guest.sh"
+alias "ci"="/home/marc/private/git/dotfiles_private/nixos/connect_wifi_inside.sh"

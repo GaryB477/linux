@@ -2,6 +2,8 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
+zsh
+
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
@@ -116,5 +118,29 @@ if ! shopt -oq posix; then
   fi
 fi
 
+# ---------------------
+#
+# -- Custom stuff
+#
+# --------------------
+
+# aliases
+alias vim=nvim
+
+
+#autojump
+. /usr/share/autojump/autojump.sh
+
+#fzf keybinds
+source /home/marc/private/git/linux/terminal/bash/key-bindings.bash
+
+#fix kitty when using ssh
+[ "$TERM" = "xterm-kitty" ] && alias ssh="kitty +kitten ssh"
+
+# Activate the new docker engine
+export DOCKER_BUILDKIT=1
+
 export KITTY_DISABLE_WAYLAND=1
 xhost +
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
