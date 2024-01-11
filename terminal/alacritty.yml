@@ -1,0 +1,12 @@
+# Install me with:
+# ln -s /home/marc/private/git/linux/terminal/alacritty.yml /home/marc/.config/alacritty/alacritty.yml
+# 
+# last tested on: Version 0.12.3
+
+font:
+  size: 12.0
+
+window:
+  opacity: 0.9
+
+live_config_reload: true
