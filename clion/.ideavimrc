@@ -22,6 +22,7 @@ map <leader>f :action CollapseRegionRecursively<CR>
 map <leader>ff :action CollapseAllRegions<CR>
 map <leader>o :action ExpandRegionRecursively<CR>
 
+map <leader>u :action FindUsages<CR>
 map <leader>i :action GotoImplementation<CR>
 map <leader>j :action Back<CR>
 map <leader>k :action Forward<CR>
