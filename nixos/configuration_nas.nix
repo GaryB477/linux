@@ -138,6 +138,8 @@
   gparted
   tree
   tailscale
+  zip
+  toybox
 
   # Usenet and friends
   ## Services
@@ -161,6 +163,7 @@
 
   # port 8989 
   services.sonarr = {
+    dataDir = "/var/lib/download/sonarr/.config/NzbDrone";
     enable = true;
     openFirewall = true;
     group = "media";
@@ -168,6 +171,7 @@
   };
   # port 7878
   services.radarr = {
+    dataDir = "/var/lib/download/radarr/.config/Radarr";
     enable = true;
     openFirewall = true;
     group = "media";
@@ -175,6 +179,7 @@
   };
   # port 6767
   services.bazarr = {
+    #dataDir = "/var/lib/download/bazarr";
     enable = true;
     openFirewall = true;
     group = "media";
@@ -182,6 +187,7 @@
   };
   # port 9117
   services.jackett= {
+    dataDir = "/var/lib/download/jackett/.config/Jackett";
     enable = true;
     openFirewall = true;
     group = "media";
@@ -190,12 +196,14 @@
   # port 9117
   # In file "/var/lib/sabnzbd/sabnzbd.ini" change the port from "127.0.0.1 or [::1]" to "0.0.0.0" to enable acces from non-local users (e.g. over networtk)
   services.sabnzbd = {
+    configFile = "/var/lib/download/sabnzbd/sabnzbd.ini";
     enable = true;
     group = "media";
     user = "marc";
   };
 
   services.qbittorrent = {
+    dataDir = "/var/lib/download/";
     enable = true;
     openFirewall = true;
     group = "media";
@@ -204,6 +212,7 @@
   };
 
   services.plex = {
+    dataDir = "/var/lib/download/plex";
     enable = true;
     openFirewall = true;
     group = "media";
@@ -221,6 +230,57 @@
   };
 
   services.tailscale.enable = true;
+
+# Netowrk share
+## Setup
+# - Add a password to the user with `smbpasswd -a <user>`
+# - Mount the network share under windows with `\\<server-ip>\raid´
+
+services.samba.openFirewall = true;
+networking.firewall.allowPing = true;
+services.samba-wsdd = {
+  # make shares visible for Windows clients
+  enable = true;
+  openFirewall = true;
+};
+services.samba = {
+  enable = true;
+  securityType = "user";
+  extraConfig = ''
+    # workgroup = WORKGROUP
+    server string = smbnix
+    netbios name = smbnix
+    # security = user 
+    #use sendfile = yes
+    #max protocol = smb2
+    # note: localhost is the ipv6 localhost ::1
+    # hosts allow = 192.168.0.31 127.0.0.1 localhost
+    # hosts deny = 0.0.0.0/0
+    # guest account = nobody
+    # map to guest = bad user
+  '';
+  shares = {
+    raid = { # <-- Name of the share!
+      path = "/raid";
+      browseable = "yes";
+      "read only" = "no";
+      "guest ok" = "yes";
+      "create mask" = "0644";
+      "directory mask" = "0755";
+      #"force user" = "username";
+      #"force group" = "groupname";
+    };
+  };
+};
+
+
+    # Enable cron service
+  services.cron = {
+    enable = true;
+    systemCronJobs = [
+      "0 4 * * *      marc   zip -r /home/marc/sync/usenet_backup_$(date +%F_%R).zip /var/lib/download/ -x '*plex*' -x '*MediaCover*'"    
+    ];
+  };
 
   users.groups.media = {};
   users.groups.media.members = [ "sonarr" "radarr" "bazarr" "jackett" "plex" ];
