@@ -147,6 +147,7 @@
   radarr
   bazarr
   jackett
+  jellyseerr
 
   ## Downloader
   qbittorrent
@@ -157,6 +158,11 @@
 
   # File synthing
   syncthing
+
+
+  # Experimental
+  gcc
+  clang
 
   ];
   };
@@ -217,6 +223,13 @@
     openFirewall = true;
     group = "media";
     user = "marc";
+  };
+
+
+  services.jellyseerr = {
+    enable = true;
+    openFirewall = true;
+    port = 8730;
   };
 
   services = {
@@ -288,12 +301,27 @@ services.samba = {
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  environment.systemPackages = with pkgs; [
-  ];
+  nix = {
+    package = pkgs.nixFlakes;
+    extraOptions = ''
+    experimental-features = nix-command flakes
+  '';
+  };
+
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
   services.openssh.settings.X11Forwarding= true;
 
   system.stateVersion = "23.11"; # Did you read the comment?
+
+environment.systemPackages = with pkgs; [
+  (python310.withPackages(ps: with ps; [ 
+     pandas
+     numpy
+     (callPackage ./conan_tools.nix { })
+   ]))
+  (callPackage ./conan_1.60.2.nix { })
+ ];
+
 }
