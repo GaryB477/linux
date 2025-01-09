@@ -12,7 +12,6 @@ imports =
     ./network.nix
     ./gnome.nix
     # ./hyprland.nix
-    ./medivation.nix # symlink from private repo!!
     # ./tuxedo.nix
   ];
 
@@ -28,19 +27,13 @@ environment.systemPackages = with pkgs; [
   (python310.withPackages(ps: with ps; [ 
      pandas
      numpy
-     (callPackage ./conan_tools.nix { })
+     #(callPackage ./conan_tools.nix { })
    ]))
-  (callPackage ./conan_1.60.2.nix { })
+  #(callPackage ./conan_1.60.2.nix { })
  ];
 
-# Setup keyfile
-boot.initrd.secrets = {
-  "/crypto_keyfile.bin" = null;
-};
-
 # Enable swap on luks
-boot.initrd.luks.devices."luks-18911171-72fb-4967-82f8-161b16b6432a".device = "/dev/disk/by-uuid/18911171-72fb-4967-82f8-161b16b6432a";
-boot.initrd.luks.devices."luks-18911171-72fb-4967-82f8-161b16b6432a".keyFile = "/crypto_keyfile.bin";
+boot.initrd.luks.devices."luks-4b7d39ae-45a9-4eff-99dd-007ddd87e43c".device = "/dev/disk/by-uuid/4b7d39ae-45a9-4eff-99dd-007ddd87e43c";
 
 # Set your time zone.
 time.timeZone = "Europe/Zurich";
@@ -52,24 +45,10 @@ console = {
   useXkbConfig = true;
 };
 
-# Map CapsLock to Esc on single press and Ctrl on when used with multiple keys.
-services.interception-tools = {
-  enable = true;
-  plugins = [ pkgs.interception-tools-plugins.caps2esc ];
-  udevmonConfig = ''
-    - JOB: "${pkgs.interception-tools}/bin/intercept -g $DEVNODE | ${pkgs.interception-tools-plugins.caps2esc}/bin/caps2esc | ${pkgs.interception-tools}/bin/uinput -d $DEVNODE"
-      DEVICE:
-        EVENTS:
-          EV_KEY: [KEY_CAPSLOCK, KEY_ESC]
-  '';
-};
-
-
 # Enable CUPS to print documents.
 services.printing.enable = true;
 
 # Enable sound with pipewire.
-sound.enable = true;
 hardware.pulseaudio.enable = false;
 security.rtkit.enable = true;
 services.pipewire = {
@@ -97,16 +76,13 @@ services.udisks2.enable = true;
 # Allow unfree packages
 nixpkgs.config.allowUnfree = true;
 
-nix = {
-  package = pkgs.nixFlakes;
-  extraOptions = ''
-  experimental-features = nix-command flakes
-'';
-};
+# Enable the Flakes feature and the accompanying new nix command-line tool
+nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
 # Change default shell
 users.defaultUserShell = pkgs.zsh;
 programs.zsh.enable = true;
+programs.zsh.ohMyZsh.enable = true;
 environment.shells = with pkgs; [ zsh ];
 
 # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -115,6 +91,8 @@ users.users.marc = {
   description = "Hans Ruedi";
   extraGroups = [ "networkmanager" "wheel" "docker" "storage" ];
   packages = with pkgs; [
+
+networking.hostName = "nixosLaptop"
 
 # Storage
 cifs-utils
@@ -150,8 +128,8 @@ meld
 glxinfo
 kooha
 jetbrains-toolbox
-shell_gpt
-unstable.jetbrains.clion
+#shell_gpt
+#unstable.jetbrains.clion
 dpkg
 
 # Development environment 
@@ -189,8 +167,8 @@ stress
 geekbench_5
 
 ## Androie tools
-android-tools
-android-studio
+#android-tools
+#android-studio
 scrcpy
 
 # Terminal 
@@ -209,6 +187,7 @@ xclip
 toybox
 jq # A lightweight and flexible command-line JSON processor
 socat
+stow # GNU stow for managing symlinked dot files
 
 # Generla stuff
 google-chrome
@@ -220,7 +199,7 @@ spotify
 slack
 libreoffice
 drawio
-gnome.nautilus
+nautilus
 cinnamon.nemo-with-extensions
 evince # default gnome pdf viewer
 udisks # automount usb sticks
