@@ -8,25 +8,26 @@
     [ (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  boot.initrd.availableKernelModules = [ "xhci_pci" "thunderbolt" "vmd" "nvme" "usb_storage" "sd_mod" ];
+  boot.initrd.availableKernelModules = [ "xhci_pci" "thunderbolt" "vmd" "nvme" "usbhid" "usb_storage" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/f1e39792-3a88-4fd1-bc98-d202ff8ab105";
+    { device = "/dev/disk/by-uuid/55cfaf60-08ef-4363-a918-55a1217155f0";
       fsType = "ext4";
     };
 
-  boot.initrd.luks.devices."luks-f7fee475-9b31-47af-bc7e-d2cc47f9fa9e".device = "/dev/disk/by-uuid/f7fee475-9b31-47af-bc7e-d2cc47f9fa9e";
+  boot.initrd.luks.devices."luks-96404fb3-223f-41a2-9a49-f48647459999".device = "/dev/disk/by-uuid/96404fb3-223f-41a2-9a49-f48647459999";
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/7F81-082E";
+    { device = "/dev/disk/by-uuid/97F7-5282";
       fsType = "vfat";
+      options = [ "fmask=0077" "dmask=0077" ];
     };
 
   swapDevices =
-    [ { device = "/dev/disk/by-uuid/58ac922b-95a5-489e-b328-7fc7590440cc"; }
+    [ { device = "/dev/disk/by-uuid/c657e2b5-de9c-4811-989f-bb0c42d7d599"; }
     ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
@@ -37,6 +38,5 @@
   # networking.interfaces.wlo1.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  powerManagement.cpuFreqGovernor = lib.mkDefault "ondemand";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }

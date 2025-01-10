@@ -12,9 +12,9 @@
   services.xserver.desktopManager.gnome.enable = true;
 
   # Configure keymap in X11
-  services.xserver = {
+  services.xserver.xkb = {
     layout = "de";
-    xkbVariant = "";
+    variant = "";
   };
 
 
@@ -23,7 +23,7 @@
       wofi # rofi, but wofi cus wayland :shrug:k
 
       # Frontend for X11 
-      gnome3.gnome-tweaks
+      gnome-tweaks
       jumpapp
       xorg.xhost
       xdotool
