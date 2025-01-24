@@ -11,10 +11,10 @@ in {
     ./hardware-configuration.nix
     ./suspend-and-hibernate.nix
     ./network.nix
-    ./gnome.nix
+    #./gnome.nix
     ./nvf-configuration.nix
-    # ./hyprland.nix
-    # ./tuxedo.nix
+    ./hyprland.nix
+    #./tuxedo.nix
   ];
 
   # acpid
