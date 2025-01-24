@@ -30,8 +30,11 @@
           enableFormat = true;
 
           nix.enable = true;
+          bash.enable = true;
           clang.enable = true;
-          java.enable = true;
+          ts.enable = true;
+          markdown.enable = true;
+          zig.enable = true;
         };
 
         # Plugins
