@@ -51,6 +51,9 @@ in {
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
+  # Enable support for thunderbolt - used for docking stations
+  services.hardware.bolt.enable = true;
+
   # Enable sound with pipewire.
   hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
@@ -121,7 +124,7 @@ in {
       networkmanagerapplet # provide GUI app: nm-connection-editor
 
       # Terminal
-      neovim
+      vimPlugins.vim-plug
       fzf
       tmux
 
@@ -141,7 +144,7 @@ in {
       kooha
       jetbrains-toolbox
       #shell_gpt
-      #unstable.jetbrains.clion
+      gitkraken
       dpkg
 
       # Development environment
@@ -153,6 +156,13 @@ in {
       xvfb-run
       fuse
       pmutils # A small collection of scripts that handle suspend and resume on behalf of HAL
+      zig
+
+      ## Kubernetes
+      kubectl
+      kubernetes
+      minikube
+      google-cloud-sdk
 
       ## CPP
       cmake
@@ -199,6 +209,7 @@ in {
       jq # A lightweight and flexible command-line JSON processor
       socat
       stow # GNU stow for managing symlinked dot files
+      copyq # Clipboard manager. Should help in case some app does store to a differen registry insead of using the global one...
 
       # Generla stuff
       google-chrome
