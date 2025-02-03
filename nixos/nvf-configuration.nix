@@ -32,6 +32,7 @@
           nix.enable = true;
           bash.enable = true;
           clang.enable = true;
+          csharp.enable = true;
           ts.enable = true;
           markdown.enable = true;
           zig.enable = true;

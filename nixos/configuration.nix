@@ -129,6 +129,7 @@ in {
       tmux
 
       # Development tools
+      zed-editor
       vscode
       git
       gitg
@@ -163,6 +164,9 @@ in {
       kubernetes
       minikube
       google-cloud-sdk
+
+      ## C sharp
+      dotnet-sdk_9
 
       ## CPP
       cmake
