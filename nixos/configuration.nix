@@ -97,6 +97,9 @@ in {
   };
 
   environment.shells = with pkgs; [zsh];
+  environment.sessionVariables = {
+    DOTNET_ROOT = "${pkgs.dotnet-sdk}/share/dotnet";
+  };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.marc = {
@@ -130,7 +133,8 @@ in {
 
       # Development tools
       zed-editor
-      vscode
+      #vscode
+      vscode-fhs # Allows for plugins to be installed and work...
       git
       gitg
       gitkraken
@@ -167,6 +171,8 @@ in {
 
       ## C sharp
       dotnet-sdk_9
+      #dotnet-sdk_8
+      dotnetCorePackages.sdk_8_0_3xx
 
       ## CPP
       cmake
