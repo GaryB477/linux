@@ -8,13 +8,9 @@
 in {
   imports = [
     # Include the results of the hardware scan.
-    ./hardware-configuration.nix
-    ./suspend-and-hibernate.nix
-    ./network.nix
-    #./gnome.nix
+    ./hardware-configurations/hardware-configuration_dell_dg.nix 
+    ./gnome.nix
     ./nvf-configuration.nix
-    ./hyprland.nix
-    #./tuxedo.nix
   ];
 
   # acpid
@@ -30,9 +26,7 @@ in {
       with ps; [
         pandas
         numpy
-        #(callPackage ./conan_tools.nix { })
       ]))
-    #(callPackage ./conan_1.60.2.nix { })
   ];
 
   # Enable swap on luks
@@ -131,9 +125,6 @@ in {
       fzf
       tmux
 
-      # Development tools
-      zed-editor
-      #vscode
       vscode-fhs # Allows for plugins to be installed and work...
       git
       gitg
@@ -148,20 +139,16 @@ in {
       glxinfo
       kooha
       jetbrains-toolbox
-      #shell_gpt
-      gitkraken
       dpkg
 
       # Development environment
       acpid # A daemon for delivering ACPI events to userspace programs
-      nodejs
       patchelf
       steam-run
       stdenv
       xvfb-run
       fuse
       pmutils # A small collection of scripts that handle suspend and resume on behalf of HAL
-      zig
 
       ## Kubernetes
       kubectl
@@ -181,27 +168,10 @@ in {
       gnumake
       doxygen
 
-      ## Conan build stuff -- may not be needed :)
-      om4
-      gnum4
-      autoconf
-      autoreconfHook
-      libtool
-
-      ## Qt
-      qtcreator
-      qt5.full
-      qt6.full
-
       # Power management testing
       powertop
       stress
       geekbench_5
-
-      ## Androie tools
-      #android-tools
-      #android-studio
-      scrcpy
 
       # Terminal
       kitty
@@ -226,7 +196,6 @@ in {
       firefox
       _1password-gui
       obsidian
-      discord
       spotify
       slack
       libreoffice
@@ -235,12 +204,6 @@ in {
       nemo-with-extensions
       evince # default gnome pdf viewer
       udisks # automount usb sticks
-
-      # Naviswiss
-      ## Naviplan workflow dependencies
-      paraview
-      flatbuffers
-      flatcc
     ];
   };
 
