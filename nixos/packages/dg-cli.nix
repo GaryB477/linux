@@ -3,7 +3,7 @@ with pkgs.python3Packages;
   buildPythonPackage rec {
     name = "dg-cli";
     format = "pyproject";
-    src = /development/Dg.Cli/src/core;
+    src = /home/marc/git/digitec/Dg.Cli/src/core;
     propagatedBuildInputs = [
       python
       typer
