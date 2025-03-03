@@ -5,10 +5,11 @@
   ...
 }: let
   unstable = import <nixos-unstable> {config = {allowUnfree = true;};};
+  dg-cli = pkgs.callPackage ./packages/dg-cli.nix {};
 in {
   imports = [
     # Include the results of the hardware scan.
-    ./hardware-configurations/hardware-configuration_dell_dg.nix 
+    ./hardware-configurations/hardware-configuration_dell_dg.nix
     ./gnome.nix
     ./nvf-configuration.nix
   ];
@@ -204,6 +205,9 @@ in {
       nemo-with-extensions
       evince # default gnome pdf viewer
       udisks # automount usb sticks
+
+      # Work specific
+      dg-cli
     ];
   };
 
