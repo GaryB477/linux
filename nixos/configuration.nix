@@ -22,6 +22,7 @@ in {
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+
   environment.systemPackages = with pkgs; [
     (python310.withPackages (ps:
       with ps; [
@@ -33,7 +34,7 @@ in {
   system.autoUpgrade.enable = true;
 
   # Enable swap on luks
-  boot.initrd.luks.devices."luks-4b7d39ae-45a9-4eff-99dd-007ddd87e43c".device = "/dev/disk/by-uuid/4b7d39ae-45a9-4eff-99dd-007ddd87e43c";
+  boot.initrd.luks.devices."luks-8d8ffe68-aae3-4e00-8c75-36661c5eafd9".device = "/dev/disk/by-uuid/8d8ffe68-aae3-4e00-8c75-36661c5eafd9";
 
   # Set your time zone.
   time.timeZone = "Europe/Zurich";
