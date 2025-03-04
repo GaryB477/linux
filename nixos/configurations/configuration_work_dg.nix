@@ -5,7 +5,7 @@
   ...
 }: let
   unstable = import <nixos-unstable> {config = {allowUnfree = true;};};
-  dg-cli = pkgs.callPackage ./packages/dg-cli.nix {};
+  dg-cli = pkgs.callPackage ../packages/dg-cli.nix {};
 in {
   imports = [
     # Include the results of the hardware scan.
