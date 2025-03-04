@@ -1,7 +1,10 @@
-
-{ config, lib, pkgs, modulesPath, ... }:
-
 {
+  config,
+  lib,
+  pkgs,
+  modulesPath,
+  ...
+}: {
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
@@ -13,16 +16,15 @@
 
   # Configure keymap in X11
   services.xserver.xkb = {
-    layout = "de";
+    layout = "ch";
     variant = "";
   };
-
 
   users.users.marc = {
     packages = with pkgs; [
       wofi # rofi, but wofi cus wayland :shrug:k
 
-      # Frontend for X11 
+      # Frontend for X11
       gnome-tweaks
       jumpapp
       xorg.xhost
