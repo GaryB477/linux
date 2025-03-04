@@ -12,6 +12,7 @@ in {
     ../hardware-configurations/hardware-configuration_dell_dg.nix
     ../GUI/gnome.nix
     ../packages/nvf-configuration.nix
+    ../packages/edr.nix
   ];
 
   # acpid
@@ -98,6 +99,9 @@ in {
   environment.sessionVariables = {
     DOTNET_ROOT = "${pkgs.dotnet-sdk}/share/dotnet";
   };
+
+  # EDR needs nix-alien
+  edr.nix-alien-pkg = pkgs.nix-alien-pkgs.nix-alien;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.marc = {
