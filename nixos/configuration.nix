@@ -175,6 +175,7 @@ in {
       geekbench_5
 
       # Terminal
+      alacritty
       kitty
       zsh
       neofetch
