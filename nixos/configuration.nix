@@ -30,6 +30,8 @@ in {
       ]))
   ];
 
+  system.autoUpgrade.enable = true;
+
   # Enable swap on luks
   boot.initrd.luks.devices."luks-4b7d39ae-45a9-4eff-99dd-007ddd87e43c".device = "/dev/disk/by-uuid/4b7d39ae-45a9-4eff-99dd-007ddd87e43c";
 
