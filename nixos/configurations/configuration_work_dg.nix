@@ -9,9 +9,9 @@
 in {
   imports = [
     # Include the results of the hardware scan.
-    ./hardware-configurations/hardware-configuration_dell_dg.nix
-    ./gnome.nix
-    ./nvf-configuration.nix
+    ../hardware-configurations/hardware-configuration_dell_dg.nix
+    ../GUI/gnome.nix
+    ../packages/nvf-configuration.nix
   ];
 
   # acpid

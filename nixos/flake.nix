@@ -19,7 +19,7 @@
         system = "x86_64-linux";
         modules = [
           nvf.nixosModules.default
-          .configurations/configuration_work_dg.nix
+          ./configurations/configuration_work_dg.nix
         ];
         #specialArgs = nixpkgsunstable;
       };
