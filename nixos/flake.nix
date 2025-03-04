@@ -14,13 +14,15 @@
     nvf,
     ...
   } @ inputs: {
-    nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      modules = [
-        nvf.nixosModules.default
-        ./configuration.nix
-      ];
-      #specialArgs = nixpkgsunstable;
+    nixosConfigurations = {
+      work_dg = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          nvf.nixosModules.default
+          .configurations/configuration_work_dg.nix
+        ];
+        #specialArgs = nixpkgsunstable;
+      };
     };
   };
 }
