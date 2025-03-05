@@ -109,6 +109,8 @@ in {
   # EDR needs nix-alien
   edr.nix-alien-pkg = pkgs.nix-alien-pkgs.nix-alien;
 
+  networking.hostName = "DG-BYOD-9364"; # Define your hostname.
+
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.marc = {
     isNormalUser = true;
