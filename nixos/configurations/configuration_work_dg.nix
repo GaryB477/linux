@@ -9,7 +9,6 @@ in {
     ../GUI/gnome.nix
     ../packages/nvf-configuration.nix
     ../packages/edr.nix
-    # ../packages/nix-alien.nix
   ];
 
   # acpid
@@ -225,6 +224,8 @@ in {
 
       # Work specific
       dg-cli
+      nix-alien-pkgs.nix-alien
+      (azure-cli.override { withExtensions = [ azure-cli-extensions.azure-devops ]; })
     ];
   };
 
