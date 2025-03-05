@@ -2,6 +2,8 @@
 let
   unstable = import <nixos-unstable> { config = { allowUnfree = true; }; };
   dg-cli = pkgs.callPackage ../packages/dg-cli.nix { };
+  # instead of pritunl-client to enable wireguard
+  pritunl-client-mvr = pkgs.callPackage ../packages/pritunl.nix { };
 in {
   imports = [
     # Include the results of the hardware scan.
@@ -109,6 +111,9 @@ in {
   edr.nix-alien-pkg = pkgs.nix-alien-pkgs.nix-alien;
 
   networking.hostName = "DG-BYOD-9364"; # Define your hostname.
+  # Pritunl does not add its service by itself
+  systemd.packages = [ pritunl-client-mvr ];
+  systemd.targets.multi-user.wants = [ "pritunl-client.service" ];
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.marc = {
@@ -228,7 +233,10 @@ in {
       # Work specific
       dg-cli
       nix-alien-pkgs.nix-alien
-      (azure-cli.override { withExtensions = [ azure-cli-extensions.azure-devops ]; })
+      (azure-cli.override {
+        withExtensions = [ azure-cli-extensions.azure-devops ];
+      })
+      pritunl-client-mvr
     ];
   };
 
