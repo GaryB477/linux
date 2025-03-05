@@ -111,6 +111,7 @@ in {
   edr.nix-alien-pkg = pkgs.nix-alien-pkgs.nix-alien;
 
   networking.hostName = "DG-BYOD-9364"; # Define your hostname.
+
   # Pritunl does not add its service by itself
   systemd.packages = [ pritunl-client-mvr ];
   systemd.targets.multi-user.wants = [ "pritunl-client.service" ];
@@ -222,7 +223,6 @@ in {
       _1password-gui
       obsidian
       spotify
-      slack
       libreoffice
       drawio
       nautilus
