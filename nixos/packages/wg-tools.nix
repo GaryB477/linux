@@ -10,6 +10,7 @@
   procps,
   bash,
   wireguard-go,
+  coreutils,
 }:
 
 stdenv.mkDerivation rec {
@@ -55,6 +56,7 @@ stdenv.mkDerivation rec {
               procps
               iproute2
               openresolv
+              coreutils
             ]
           } \
           --suffix PATH : ${
