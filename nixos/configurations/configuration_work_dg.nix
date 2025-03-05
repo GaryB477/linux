@@ -139,8 +139,11 @@ in {
       vimPlugins.vim-plug
       fzf
       tmux
+      nix-search
 
       vscode-fhs # Allows for plugins to be installed and work...
+      teams-for-linux
+
       git
       gitg
       gitkraken
