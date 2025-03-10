@@ -1,6 +1,6 @@
 { config, pkgs, ... }: let
   hibernateEnvironment = {
-    HIBERNATE_SECONDS = "7200";
+    HIBERNATE_SECONDS = "108000"; # 30 hours
     HIBERNATE_LOCK = "/var/run/autohibernate.lock";
   };
 in {
