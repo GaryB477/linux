@@ -25,7 +25,7 @@ in {
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  environment.systemPackages = with pkgs; [(python310.withPackages (ps: with ps; [pandas numpy]))];
+  environment.systemPackages = with pkgs; [(python310.withPackages (ps: with ps; [pandas numpy gyp]))];
 
   system.autoUpgrade.enable = true;
 
@@ -146,7 +146,7 @@ in {
 
   environment.shells = with pkgs; [zsh];
   environment.sessionVariables = {
-    DOTNET_ROOT = "${pkgs.dotnet-sdk}/share/dotnet";
+    DOTNET_ROOT = "${pkgs.dotnetCorePackages.sdk_9_0_2xx}/share/dotnet";
   };
 
   # EDR needs nix-alien
@@ -196,6 +196,7 @@ in {
       remmina
       pulseaudio
 
+      gh # GitHub cli
       git
       gitg
       gitkraken
@@ -219,7 +220,7 @@ in {
       xvfb-run
       fuse
       pmutils # A small collection of scripts that handle suspend and resume on behalf of HAL
-      nixfmt
+      nixfmt-classic
 
       ## Kubernetes
       kubectl
@@ -228,9 +229,15 @@ in {
       google-cloud-sdk
 
       ## C sharp
-      dotnet-sdk_9
+      #dotnet-sdk_9
       #dotnet-sdk_8
-      dotnetCorePackages.sdk_8_0_3xx
+      dotnetCorePackages.sdk_8_0
+      dotnetCorePackages.sdk_9_0
+      dotnetCorePackages.sdk_9_0_1xx
+      dotnetCorePackages.sdk_9_0_2xx
+
+      # postgres
+      postgresql
 
       ## CPP
       cmake
@@ -289,6 +296,9 @@ in {
       terraform
       corepack
       nodejs_23
+      node-gyp
+      poetry
+      unixODBC
     ];
   };
 
