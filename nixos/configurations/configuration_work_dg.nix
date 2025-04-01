@@ -25,7 +25,7 @@ in {
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  environment.systemPackages = with pkgs; [(python310.withPackages (ps: with ps; [pandas numpy gyp]))];
+  environment.systemPackages = with pkgs; [(python310.withPackages (ps: with ps; [pandas numpy gyp psutil]))];
 
   system.autoUpgrade.enable = true;
 
@@ -190,6 +190,7 @@ in {
       screen
       nix-search
       usbutils # displays more info about usb devices
+      s-tui
 
       vscode-fhs # Allows for plugins to be installed and work...
       teams-for-linux
@@ -299,6 +300,7 @@ in {
       node-gyp
       poetry
       unixODBC
+      act # Github action on local machine
     ];
   };
 
