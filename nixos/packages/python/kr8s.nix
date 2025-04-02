@@ -1,19 +1,21 @@
-{ pkgs, unstable, ... }:
-
-with unstable.pkgs;
-with unstable.pkgs.python3Packages;
+{ pkgs, system ? builtins.currentSystem, ... }:
 
 let
-  asyncache = callPackage ./asyncache.nix { };
-  python-jsonpath = callPackage ./python-jsonpath.nix { };
-  pytest-kind = callPackage ./pytest-kind.nix { };
-  pykube = callPackage ./pykube.nix { };
-  unstable = import (fetchTarball
-    "https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz") {
-      config.allowUnfree = true;
-    };
-in buildPythonPackage rec {
+  asyncache = pkgs.callPackage ./asyncache.nix { };
+  python-jsonpath = pkgs.callPackage ./python-jsonpath.nix { };
+  pytest-kind = pkgs.callPackage ./pytest-kind.nix { };
+  pykube = pkgs.callPackage ./pykube.nix { };
+  unstable = import (fetchTarball {
+    url = "https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz";
+    sha256 = "06qsbbjv3gmrx6bppzkrcigh7mxwshd6a8wszhll0sn952chyqbf";
+  }) {
+    inherit system;
+    config.allowUnfree = true;
+  };
+in with unstable.pkgs;
+with unstable.pkgs.python3Packages;
 
+buildPythonPackage rec {
   pname = "kr8s";
   version = "0.20.6";
   pyproject = true;
@@ -29,16 +31,20 @@ in buildPythonPackage rec {
 
   buildInputs = [
     anyio
-    asyncache
     cachetools
     cryptography
     httpx-ws
     httpx
-    pykube
-    pytest-kind
     python-box
-    python-jsonpath
     pyyaml
+  ];
+
+  # use native instead or normal buildInputs to avoid python version conflicts
+  nativeBuildInputs = [ 
+    asyncache
+    python-jsonpath
+    pytest-kind
+    pykube
   ];
 
   pythonImportsCheck = [ "kr8s" ];

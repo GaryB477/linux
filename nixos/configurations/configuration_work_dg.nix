@@ -1,13 +1,8 @@
-{
-  config,
-  pkgs,
-  lib,
-  ...
-}: let
-  unstable = import <nixos-unstable> {config = {allowUnfree = true;};};
-  dg-cli = pkgs.callPackage ../packages/dg-cli.nix {};
-  # instead of pritunl-client to enable wireguard
-  pritunl-client-mvr = pkgs.callPackage ../packages/pritunl.nix {};
+{ config, pkgs, lib, inputs, ... }:
+let
+  dg-cli = pkgs.callPackage ../packages/dg-cli.nix { };
+  pritunl-client-mvr = pkgs.callPackage ../packages/pritunl.nix { };
+  unstable = inputs.nixpkgsunstable;
 in {
   imports = [
     # Include the results of the hardware scan.
@@ -19,18 +14,20 @@ in {
   ];
 
   # acpid
-  services.acpid = {enable = true;};
+  services.acpid = { enable = true; };
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  environment.systemPackages = with pkgs; [(python310.withPackages (ps: with ps; [pandas numpy gyp psutil]))];
+  environment.systemPackages = with pkgs;
+    [ (python310.withPackages (ps: with ps; [ pandas numpy gyp psutil ])) ];
 
   system.autoUpgrade.enable = true;
 
   # Enable swap on luks
-  boot.initrd.luks.devices."luks-8d8ffe68-aae3-4e00-8c75-36661c5eafd9".device = "/dev/disk/by-uuid/8d8ffe68-aae3-4e00-8c75-36661c5eafd9";
+  boot.initrd.luks.devices."luks-8d8ffe68-aae3-4e00-8c75-36661c5eafd9".device =
+    "/dev/disk/by-uuid/8d8ffe68-aae3-4e00-8c75-36661c5eafd9";
 
   # Set your time zone.
   time.timeZone = "Europe/Zurich";
@@ -38,12 +35,10 @@ in {
   i18n.defaultLocale = "en_US.UTF-8";
 
   # Enable OpenGL
-  hardware.graphics = {
-    enable = true;
-  };
+  hardware.graphics = { enable = true; };
 
   # Load nvidia driver for Xorg and Wayland
-  services.xserver.videoDrivers = ["nvidia"];
+  services.xserver.videoDrivers = [ "nvidia" ];
 
   hardware.nvidia = {
     # Modesetting is required.
@@ -76,7 +71,7 @@ in {
   };
 
   # Configure console keymap
-  console = {useXkbConfig = true;};
+  console = { useXkbConfig = true; };
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
@@ -92,12 +87,6 @@ in {
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
-
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-    #media-session.enable = true;
   };
 
   # Add docker support
@@ -112,15 +101,6 @@ in {
   # Allow unfree packages
   nixpkgs.config = {
     allowUnfree = true;
-    packageOverrides = pkgs: {
-      unstable = import (fetchTarball
-        "https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz") {
-        config.allowUnfree = true;
-      };
-      nix-alien-pkgs =
-        import (builtins.fetchTarball
-          "https://github.com/thiagokokada/nix-alien/tarball/master") {};
-    };
     permittedInsecurePackages = [
       "openssl-1.1.1w" # for sublime4
       "nodejs-14.21.3"
@@ -131,7 +111,7 @@ in {
   };
 
   # Enable the Flakes feature and the accompanying new nix command-line tool
-  nix.settings.experimental-features = ["nix-command" "flakes"];
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # Change default shell
   users.defaultUserShell = pkgs.zsh;
@@ -140,29 +120,29 @@ in {
   programs.zsh.syntaxHighlighting.enable = true;
   programs.zsh.ohMyZsh = {
     enable = true;
-    plugins = ["git" "z" "fzf"];
+    plugins = [ "git" "z" "fzf" ];
     theme = "agnoster";
   };
 
-  environment.shells = with pkgs; [zsh];
+  environment.shells = with pkgs; [ zsh ];
   environment.sessionVariables = {
     DOTNET_ROOT = "${pkgs.dotnetCorePackages.sdk_9_0_2xx}/share/dotnet";
   };
 
   # EDR needs nix-alien
-  edr.nix-alien-pkg = pkgs.nix-alien-pkgs.nix-alien;
+  edr.nix-alien-pkg = inputs.nix-alien.packages."${pkgs.system}".nix-alien;
 
   networking.hostName = "DG-BYOD-9364"; # Define your hostname.
 
   # Pritunl does not add its service by itself
-  systemd.packages = [pritunl-client-mvr];
-  systemd.targets.multi-user.wants = ["pritunl-client.service"];
+  systemd.packages = [ pritunl-client-mvr ];
+  systemd.targets.multi-user.wants = [ "pritunl-client.service" ];
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.marc = {
     isNormalUser = true;
     description = "Hans Ruedi";
-    extraGroups = ["networkmanager" "wheel" "docker" "storage"];
+    extraGroups = [ "networkmanager" "wheel" "docker" "storage" ];
     packages = with pkgs; [
       # Storage
       cifs-utils
@@ -286,9 +266,9 @@ in {
 
       # Work specific
       dg-cli
-      nix-alien-pkgs.nix-alien
+      inputs.nix-alien.packages."${pkgs.system}".nix-alien
       (azure-cli.override {
-        withExtensions = [azure-cli-extensions.azure-devops];
+        withExtensions = [ azure-cli-extensions.azure-devops ];
       })
       pritunl-client-mvr
       kubectl
@@ -305,7 +285,7 @@ in {
   };
 
   # Fonts. Corefonts contain the webdings fonts needed by some Medivation documents, like the risk analysis
-  fonts.packages = with pkgs; [nerdfonts corefonts];
+  fonts.packages = with pkgs; [ nerdfonts corefonts ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
