@@ -1,6 +1,5 @@
 { config, pkgs, lib, inputs, ... }:
 let
-  dg-cli = pkgs.callPackage ../packages/dg-cli.nix { };
   pritunl-client-mvr = pkgs.callPackage ../packages/pritunl.nix { };
   unstable = inputs.nixpkgsunstable;
 in {
@@ -265,7 +264,7 @@ in {
       udisks # automount usb sticks
 
       # Work specific
-      dg-cli
+      inputs.dg-cli.packages.${system}.default
       inputs.nix-alien.packages."${pkgs.system}".nix-alien
       (azure-cli.override {
         withExtensions = [ azure-cli-extensions.azure-devops ];
