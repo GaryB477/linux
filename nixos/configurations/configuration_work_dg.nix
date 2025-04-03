@@ -22,7 +22,18 @@ in {
   environment.systemPackages = with pkgs;
     [ (python310.withPackages (ps: with ps; [ pandas numpy gyp psutil ])) ];
 
-  system.autoUpgrade.enable = true;
+  system.autoUpgrade = {
+    enable = true;
+    flake = inputs.self.outPath;
+    flags = [
+      "--update-input"
+      "nixpkgs"
+      "--no-write-lock-file"
+      "-L" # print build logs
+    ];
+    dates = "02:00";
+    randomizedDelaySec = "45min";
+  };
 
   # Enable swap on luks
   boot.initrd.luks.devices."luks-8d8ffe68-aae3-4e00-8c75-36661c5eafd9".device =
