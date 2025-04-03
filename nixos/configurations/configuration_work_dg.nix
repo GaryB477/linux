@@ -162,15 +162,6 @@ in {
       ncmpcpp # a mpd client with a UI
       networkmanagerapplet # provide GUI app: nm-connection-editor
 
-      # Terminal
-      vimPlugins.vim-plug
-      fzf
-      tmux
-      screen
-      nix-search
-      usbutils # displays more info about usb devices
-      s-tui
-
       vscode-fhs # Allows for plugins to be installed and work...
       teams-for-linux
       remmina
@@ -208,13 +199,9 @@ in {
       minikube
       google-cloud-sdk
 
-      ## C sharp
-      #dotnet-sdk_9
-      #dotnet-sdk_8
-      dotnetCorePackages.sdk_8_0
-      dotnetCorePackages.sdk_9_0
-      dotnetCorePackages.sdk_9_0_1xx
-      dotnetCorePackages.sdk_9_0_2xx
+      ## C scharf
+      (with pkgs.dotnetCorePackages;
+        combinePackages [ sdk_8_0 sdk_9_0 sdk_9_0_1xx sdk_9_0_2xx ])
 
       # postgres
       postgresql
@@ -232,6 +219,16 @@ in {
       geekbench_5
 
       # Terminal
+      btop
+      broot
+      lazydocker
+      vimPlugins.vim-plug
+      fzf
+      tmux
+      screen
+      nix-search
+      usbutils # displays more info about usb devices
+      s-tui
       alacritty
       kitty
       zsh
@@ -280,6 +277,7 @@ in {
       poetry
       unixODBC
       act # Github action on local machine
+      azuredatastudio
     ];
   };
 
