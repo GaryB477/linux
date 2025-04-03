@@ -17,7 +17,6 @@
         modules = [
           ./configurations/configuration_work_dg.nix
           nvf.nixosModules.default
-          # dg-cli.default
         ];
       };
     };
