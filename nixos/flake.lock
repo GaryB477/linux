@@ -9,15 +9,16 @@
       "locked": {
         "lastModified": 1743689090,
         "narHash": "sha256-GUDzZOLhCxfhDAsnaTRbkHJjxjb94YWJ82Evo0xExVc=",
-        "owner": "GaryB477",
-        "repo": "DG-CLI",
+        "ref": "main",
         "rev": "38b041ebce5982afac3a06ad08de9d8ee076bd67",
-        "type": "github"
+        "revCount": 18,
+        "type": "git",
+        "url": "ssh://git@github.com/DigitecGalaxus/Dg.Cli-Nix"
       },
       "original": {
-        "owner": "GaryB477",
-        "repo": "DG-CLI",
-        "type": "github"
+        "ref": "main",
+        "type": "git",
+        "url": "ssh://git@github.com/DigitecGalaxus/Dg.Cli-Nix"
       }
     },
     "flake-compat": {
