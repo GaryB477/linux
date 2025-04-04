@@ -20,5 +20,16 @@
         ];
       };
     };
+
+    nixosConfigurations = {
+      home = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = { inherit inputs; };
+        modules = [
+          ./configurations/configuration_home.nix
+          nvf.nixosModules.default
+        ];
+      };
+    };
   };
 }
