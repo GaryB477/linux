@@ -6,10 +6,10 @@
     nixpkgsunstable.url = "github:nixos/nixpkgs/nixos-unstable";
     nvf.url = "github:notashelf/nvf";
     nix-alien.url = "github:thiagokokada/nix-alien";
-    dg-cli.url = "git+ssh://git@github.com/DigitecGalaxus/Dg.Cli-Nix?ref=main";
+    #dg-cli.url = "git+ssh://git@github.com/DigitecGalaxus/Dg.Cli-Nix?ref=main";
   };
 
-  outputs = { self, nixpkgs, nvf, dg-cli, ... }@inputs: {
+  outputs = { self, nixpkgs, nvf, ... }@inputs: {
     nixosConfigurations = {
       work_dg = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
