@@ -5,19 +5,22 @@ let
 in {
   imports = [
     # Include the results of the hardware scan.
-    ../hardware-configurations/hardware-configuration_dell_dg.nix
+    ../hardware-configurations/hardware-configuration_home.nix
     ../GUI/gnome.nix
     ../packages/nvf-configuration.nix
-    ../packages/edr.nix
-    ../system/suspend-and-hibernate.nix
+    #../packages/edr.nix
   ];
 
   # acpid
   services.acpid = { enable = true; };
 
   # Bootloader.
-  boot.loader.systemd-boot.enable = true;
+  #boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.grub.enable = true;
+  boot.loader.grub.devices = [ "nodev" ];
+  boot.loader.grub.efiSupport = true;
+  boot.loader.grub.useOSProber = true;
 
   environment.systemPackages = with pkgs;
     [ (python310.withPackages (ps: with ps; [ pandas numpy gyp psutil ])) ];
@@ -36,19 +39,23 @@ in {
   };
 
   # Enable swap on luks
-  boot.initrd.luks.devices."luks-8d8ffe68-aae3-4e00-8c75-36661c5eafd9".device =
-    "/dev/disk/by-uuid/8d8ffe68-aae3-4e00-8c75-36661c5eafd9";
-
+  boot.initrd.luks.devices."luks-d0aa1b0d-6d29-4561-b7b3-748a7393c9e9".device =
+    "/dev/disk/by-uuid/d0aa1b0d-6d29-4561-b7b3-748a7393c9e9";
   # Set your time zone.
   time.timeZone = "Europe/Zurich";
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
 
   # Enable OpenGL
-  hardware.graphics = { enable = true; };
-
+  hardware.opengl = {
+    enable = true;
+    driSupport32Bit = true;
+  };
   # Load nvidia driver for Xorg and Wayland
   services.xserver.videoDrivers = [ "nvidia" ];
+  programs.steam.enable = true;
+  programs.steam.gamescopeSession.enable = true;
+  programs.gamemode.enable = true;
 
   hardware.nvidia = {
     # Modesetting is required.
@@ -138,9 +145,13 @@ in {
   environment.sessionVariables = {
     DOTNET_ROOT = "${pkgs.dotnetCorePackages.sdk_9_0_2xx}/share/dotnet";
   };
+  environment.sessionVariables = {
+    STEAM_EXTRA_COMPAT_TOOLS_PATHS =
+      "/home/marc/.steam/root/compatibilitytools.d";
+  };
 
   # EDR needs nix-alien
-  edr.nix-alien-pkg = inputs.nix-alien.packages."${pkgs.system}".nix-alien;
+  #edr.nix-alien-pkg = inputs.nix-alien.packages."${pkgs.system}".nix-alien;
 
   networking.hostName = "DG-BYOD-9364"; # Define your hostname.
 
@@ -264,6 +275,15 @@ in {
       _1password-gui
       obsidian
       spotify
+      discord
+      protonup
+      #steam
+      #(steam.override
+      #{extraLibraries = pkgs: [pkgs.gperftools];})
+      mangohud
+      vulkan-tools
+      lutris
+      webcord
       libreoffice
       drawio
       nautilus
@@ -272,7 +292,7 @@ in {
       udisks # automount usb sticks
 
       # Work specific
-      inputs.dg-cli.packages.${system}.default
+      #inputs.dg-cli.packages.${system}.default
       inputs.nix-alien.packages."${pkgs.system}".nix-alien
       (azure-cli.override {
         withExtensions = [ azure-cli-extensions.azure-devops ];
