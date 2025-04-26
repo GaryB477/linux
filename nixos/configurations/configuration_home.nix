@@ -5,11 +5,12 @@ in {
   imports = [
     # Include the results of the hardware scan.
     ../hardware-configurations/hardware-configuration_home.nix
-    ../GUI/gnome.nix
+    # ../GUI/gnome.nix
+    ../GUI/openbox.nix
+    # ../GUI/hyprland.nix
     ../packages/nvf-configuration.nix
     #../packages/edr.nix
   ];
-
   # acpid
   services.acpid = { enable = true; };
 
