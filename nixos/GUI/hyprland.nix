@@ -1,10 +1,4 @@
-{
-  config,
-  lib,
-  pkgs,
-  modulesPath,
-  ...
-}: {
+{ config, lib, pkgs, inputs, ... }: {
   programs.hyprland.enable = true;
 
   # Use wayland as default
@@ -13,7 +7,7 @@
   programs.waybar = {
     enable = true;
     package = pkgs.waybar.overrideAttrs (oldAttrs: {
-      mesonFlags = oldAttrs.mesonFlags ++ ["-Dexperimental=true"];
+      mesonFlags = oldAttrs.mesonFlags ++ [ "-Dexperimental=true" ];
     });
   };
 
@@ -24,7 +18,7 @@
       eval "$(ssh-agent -s)"
       ssh-add $HOME/.ssh/id_ed25519
     '';
-    wantedBy = ["graphical-session.target"]; #starts after login
+    wantedBy = [ "graphical-session.target" ]; # starts after login
   };
 
   users.users.marc = {
@@ -37,6 +31,7 @@
       wlogout # logout menu
       wl-clipboard # copying and pasting
       wf-recorder # creen recording
+      waybar
 
       upower # Waybar applets
       gnome-power-manager # Waybar # Waybar applets
@@ -49,6 +44,14 @@
 
       # Debuggings tools
       libinput
+
+      brightnessctl # used by hypridle to dimm screen
+
+      # Hyprland friends
+      (import inputs.unstable {
+        inherit system;
+      }).hyprlock # Need V0.7 to fix nvidia screenshot bug
+      hypridle
     ];
   };
 }
