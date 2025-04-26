@@ -3,13 +3,9 @@ let
   pritunl-client-mvr = pkgs.callPackage ../packages/pritunl.nix { };
 in {
   imports = [
-    # Include the results of the hardware scan.
     ../hardware-configurations/hardware-configuration_home.nix
-    # ../GUI/gnome.nix
     ../GUI/openbox.nix
-    # ../GUI/hyprland.nix
     ../packages/nvf-configuration.nix
-    #../packages/edr.nix
   ];
   # acpid
   services.acpid = { enable = true; };
@@ -22,8 +18,6 @@ in {
       devices = [ "nodev" ];
       efiSupport = true;
       useOSProber = true;
-      # fsIdentifier = "label";
-      # efiInstallAsRemovable = true;
       gfxmodeEfi = "3440x1440";
       fontSize = 36;
     };
