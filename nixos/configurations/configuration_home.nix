@@ -226,6 +226,7 @@ in {
       geekbench_5
 
       # Terminal
+      just
       btop
       broot
       lazydocker
