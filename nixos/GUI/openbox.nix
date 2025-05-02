@@ -17,7 +17,6 @@
       obconf
       tint2
       xorg.xhost
-      picom
       wmctrl
       dmenu
       jumpapp
