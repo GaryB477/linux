@@ -12,11 +12,21 @@
     windowManager.openbox.enable = true;
   };
 
+  services.autorandr = {
+    enable = true;
+    # Usage: create setup as desired with xrandr.
+    # E.g.:
+    # `xrandr --output HDMI-0 --mode 3840x2160 --rate 120`
+    # `xrandr --output DP-0 --mode 2560x1440 --rate 120 --rotate left`
+    # Then be sure to updte the config in the dotfiles repo
+  };
+
   users.users.marc = {
     packages = with pkgs; [
       obconf
       tint2
       xorg.xhost
+      xorg.xprop
       wmctrl
       dmenu
       jumpapp
@@ -24,6 +34,9 @@
       autorandr
       arandr
       polkit
+      feh
+      
+      picom
     ];
   };
 }
