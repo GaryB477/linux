@@ -1,6 +1,11 @@
-{ config, pkgs, lib, inputs, ... }:
-let
-  pritunl-client-mvr = pkgs.callPackage ../packages/pritunl.nix { };
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  ...
+}: let
+  pritunl-client-mvr = pkgs.callPackage ../packages/pritunl.nix {};
   unstable = inputs.nixpkgsunstable;
 in {
   imports = [
@@ -12,16 +17,40 @@ in {
     ../system/suspend-and-hibernate.nix
   ];
 
+  # #
+  # Boot loader
+  # #
+
   # acpid
-  services.acpid = { enable = true; };
-
-  # Bootloader.
-  boot.loader.systemd-boot.enable = true;
+  services.acpid = {enable = true;};
   boot.loader.efi.canTouchEfiVariables = true;
+  # Lanzaboote currently replaces the systemd-boot module.
+  # This setting is usually set to true in configuration.nix
+  # generated at installation time. So we force it to false
+  # for now.
+  boot.loader.systemd-boot.enable = lib.mkForce false;
+  boot.lanzaboote = {
+    # Check initial status:
+    # - bootctl status
 
-  environment.systemPackages = with pkgs;
-    [ (python310.withPackages (ps: with ps; [ pandas numpy gyp psutil ])) ];
+    # Setup:
+    # - sudo sbctl create-keys
+    # - sudo sbctl setup --migrate # needed if some keys are already present or old
 
+    # Verify:
+    # - sudo sbctl verify
+    # Note: It is expected that the files ending with bzImage.efi are not signed.
+    # For me, some older generations were also not signed.
+
+    enable = true;
+    pkiBundle = "/var/lib/sbctl";
+  };
+  # Enable swap on luks
+  boot.initrd.luks.devices."luks-8d8ffe68-aae3-4e00-8c75-36661c5eafd9".device = "/dev/disk/by-uuid/8d8ffe68-aae3-4e00-8c75-36661c5eafd9";
+
+  # #
+  # System setup
+  # #
   system.autoUpgrade = {
     enable = true;
     flake = inputs.self.outPath;
@@ -34,81 +63,15 @@ in {
     dates = "02:00";
     randomizedDelaySec = "45min";
   };
-
-  # Enable swap on luks
-  boot.initrd.luks.devices."luks-8d8ffe68-aae3-4e00-8c75-36661c5eafd9".device =
-    "/dev/disk/by-uuid/8d8ffe68-aae3-4e00-8c75-36661c5eafd9";
-
-  # Set your time zone.
+  # Enable the Flakes feature and the accompanying new nix command-line tool
+  nix.settings.experimental-features = ["nix-command" "flakes"];
   time.timeZone = "Europe/Zurich";
-  # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
-
-  # Enable OpenGL
-  hardware.graphics = { enable = true; };
-
-  # Load nvidia driver for Xorg and Wayland
-  services.xserver.videoDrivers = [ "nvidia" ];
-
-  hardware.nvidia = {
-    # Modesetting is required.
-    modesetting.enable = true;
-
-    # Nvidia power management. Experimental, and can cause sleep/suspend to fail.
-    # Enable this if you have graphical corruption issues or application crashes after waking
-    # up from sleep. This fixes it by saving the entire VRAM memory to /tmp/ instead
-    # of just the bare essentials.
-    powerManagement.enable = false;
-
-    # Fine-grained power management. Turns off GPU when not in use.
-    # Experimental and only works on modern Nvidia GPUs (Turing or newer).
-    powerManagement.finegrained = false;
-
-    # Use the NVidia open source kernel module (not to be confused with the
-    # independent third-party "nouveau" open source driver).
-    # Support is limited to the Turing and later architectures. Full list of
-    # supported GPUs is at:
-    # https://github.com/NVIDIA/open-gpu-kernel-modules#compatible-gpus
-    # Only available from driver 515.43.04+
-    open = false;
-
-    # Enable the Nvidia settings menu,
-    # accessible via `nvidia-settings`.
-    nvidiaSettings = true;
-
-    # Optionally, you may need to select the appropriate driver version for your specific GPU.
-    package = config.boot.kernelPackages.nvidiaPackages.stable;
-  };
-
-  # Configure console keymap
-  console = { useXkbConfig = true; };
-
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
-
-  # Enable support for thunderbolt - used for docking stations
-  services.hardware.bolt.enable = true;
-
-  # Enable sound with pipewire.
-  hardware.pulseaudio.enable = false;
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-  };
-
-  # Add docker support
+  networking.hostName = "DG-BYOD-9364";
   virtualisation.docker.enable = true;
+  fonts.packages = with pkgs; [nerdfonts corefonts];
 
-  programs.nix-ld.enable = true;
-  services.upower.enable = true;
-  services.devmon.enable = true;
-  services.gvfs.enable = true;
-  services.udisks2.enable = true;
-
-  # Allow unfree packages
+  # Nixpkgs setup
   nixpkgs.config = {
     allowUnfree = true;
     permittedInsecurePackages = [
@@ -120,40 +83,75 @@ in {
     ];
   };
 
-  # Enable the Flakes feature and the accompanying new nix command-line tool
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
-
-  # Change default shell
+  # Console
+  console = {useXkbConfig = true;};
   users.defaultUserShell = pkgs.zsh;
   programs.zsh.enable = true;
   programs.zsh.autosuggestions.enable = true;
   programs.zsh.syntaxHighlighting.enable = true;
   programs.zsh.ohMyZsh = {
     enable = true;
-    plugins = [ "git" "z" "fzf" ];
+    plugins = ["git" "z" "fzf"];
     theme = "agnoster";
   };
-
-  environment.shells = with pkgs; [ zsh ];
+  environment.shells = with pkgs; [zsh];
   environment.sessionVariables = {
     DOTNET_ROOT = "${pkgs.dotnetCorePackages.sdk_9_0_2xx}/share/dotnet";
   };
 
-  # EDR needs nix-alien
+  # #
+  # Graphics setup
+  # #
+  # Enable OpenGL
+  hardware.graphics = {enable = true;};
+  # Load nvidia driver for Xorg and Wayland
+  services.xserver.videoDrivers = ["nvidia"];
+  hardware.nvidia = {
+    modesetting.enable = true;
+    powerManagement.enable = false;
+    powerManagement.finegrained = false;
+    open = false;
+    nvidiaSettings = true;
+    package = config.boot.kernelPackages.nvidiaPackages.stable;
+  };
+
+  # #
+  # Services
+  # #
+  services.printing.enable = true;
+  services.hardware.bolt.enable = true;
+  hardware.pulseaudio.enable = false;
+  security.rtkit.enable = true;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+  };
+  services.upower.enable = true;
+  services.devmon.enable = true;
+  services.gvfs.enable = true;
+  services.udisks2.enable = true;
+  systemd.packages = [pritunl-client-mvr];
+  systemd.targets.multi-user.wants = ["pritunl-client.service"];
+
+  # EDR setup
+  programs.nix-ld.enable = true;
   edr.nix-alien-pkg = inputs.nix-alien.packages."${pkgs.system}".nix-alien;
 
-  networking.hostName = "DG-BYOD-9364"; # Define your hostname.
-
-  # Pritunl does not add its service by itself
-  systemd.packages = [ pritunl-client-mvr ];
-  systemd.targets.multi-user.wants = [ "pritunl-client.service" ];
+  environment.systemPackages = with pkgs; [(python310.withPackages (ps: with ps; [pandas numpy gyp psutil]))];
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.marc = {
     isNormalUser = true;
     description = "Hans Ruedi";
-    extraGroups = [ "networkmanager" "wheel" "docker" "storage" ];
+    extraGroups = ["networkmanager" "wheel" "docker" "storage"];
     packages = with pkgs; [
+      # Boot
+      # Unstable is needed since we need to migrate to the latest version to allow secure boot
+      # https://github.com/nix-community/lanzaboote/issues/413#:~:text=You%20can%20also%20pull%20the%20latest%20sbctl%20from%20%3Cnixpkgs%2Dunstable%3E.
+      (import inputs.nixpkgsunstable {inherit system;}).sbctl
+
       # Storage
       cifs-utils
 
@@ -177,10 +175,6 @@ in {
       teams-for-linux
       remmina
       pulseaudio
-
-      gh # GitHub cli
-      git
-      gitg
       gitkraken
       gimp
       docker
@@ -212,7 +206,7 @@ in {
 
       ## C scharf
       (with pkgs.dotnetCorePackages;
-        combinePackages [ sdk_8_0 sdk_9_0 sdk_9_0_1xx sdk_9_0_2xx ])
+          combinePackages [sdk_8_0 sdk_9_0 sdk_9_0_1xx sdk_9_0_2xx])
 
       # postgres
       postgresql
@@ -230,6 +224,10 @@ in {
       geekbench_5
 
       # Terminal
+      gh # GitHub cli
+      git
+      gitui
+      gitg
       btop
       broot
       lazydocker
@@ -258,7 +256,7 @@ in {
       stow # GNU stow for managing symlinked dot files
       copyq # Clipboard manager. Should help in case some app does store to a differen registry insead of using the global one...
 
-      # Generla stuff
+      # General stuff
       google-chrome
       firefox
       _1password-gui
@@ -275,7 +273,7 @@ in {
       inputs.dg-cli.packages.${system}.default
       inputs.nix-alien.packages."${pkgs.system}".nix-alien
       (azure-cli.override {
-        withExtensions = [ azure-cli-extensions.azure-devops ];
+        withExtensions = [azure-cli-extensions.azure-devops];
       })
       pritunl-client-mvr
       kubectl
@@ -285,15 +283,14 @@ in {
       corepack
       nodejs_23
       node-gyp
-      poetry
+      (import inputs.nixpkgsunstable {inherit system;}).poetry
       unixODBC
       act # Github action on local machine
       azuredatastudio
+      chromedriver
+      postman
     ];
   };
-
-  # Fonts. Corefonts contain the webdings fonts needed by some Medivation documents, like the risk analysis
-  fonts.packages = with pkgs; [ nerdfonts corefonts ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
