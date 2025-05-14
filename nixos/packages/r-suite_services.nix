@@ -1,10 +1,10 @@
+{ config, lib, pkgs, inputs, ... }:
+let
+  unstable = import inputs.nixpkgsunstable {
+    config.allowUnfree = true;
+  };
+in 
 {
-  config,
-  lib,
-  pkgs,
-  inputs,
-  ...
-}: {
   # port 8989 
   services.sonarr = {
     dataDir = "/var/lib/download/sonarr/.config/NzbDrone";
@@ -30,9 +30,9 @@
     user = "marc";
   };
   # port 9117
-  services.jackett= {
+  services.jackett = {
     # Did overwrite since channel 24.11 used a 863 or whatever version, which had non-passing tests.
-    package = inputs.nixpkgsunstable.legacyPackages.${pkgs.system}.jackett;
+    package = unstable.jackett;
     enable = true;
     openFirewall = true;
     group = "media";
@@ -56,7 +56,10 @@
     port = 8728;
   };
 
+  # inputs.nixpkgsunstable.config.allowUnfree = true;
   services.plex = {
+    #package = unstable.legacyPackages.${pkgs.system}.plex;
+    package = unstable.plex;
     dataDir = "/var/lib/download/plex";
     enable = true;
     openFirewall = true;
