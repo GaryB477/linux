@@ -1,0 +1,30 @@
+esphome:
+  name: lamp
+
+esp32:
+  board: firebeetle32
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  password: "Roetma477"
+
+ota:
+  - platform: esphome
+    password: "Roetma477"
+
+wifi:
+  ssid: "WN-0C4AA0"
+  password: "3xqxwhot"
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Lamp Fallback Hotspot"
+    password: "wudiK4Dak3vh"
+
+captive_portal:
+    

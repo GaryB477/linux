@@ -2,7 +2,7 @@
   config,
   lib,
   pkgs,
-  modulesPath,
+  inputs,
   ...
 }: {
   # port 8989 
