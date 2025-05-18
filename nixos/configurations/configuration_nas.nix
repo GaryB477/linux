@@ -6,6 +6,7 @@
     ../packages/qbittorrent.nix
     ../packages/r-suite_services.nix
     ../packages/homepage.nix
+    ../packages/home-assistant-vm.nix
     (fetchTarball
       "https://github.com/nix-community/nixos-vscode-server/tarball/master")
   ];
@@ -50,7 +51,7 @@
   networking.hostName = "nixos_nas"; # Define your hostname.
   networking.networkmanager.enable = true;
   networking.firewall = {
-    enable = true;
+    enable = false;
     allowedTCPPorts = [ 563 8384 22000 30055 ];
     allowedUDPPorts = [ 563 22000 21027 30055 8123 6052 ];
     # Allow Home Assistant access only from local network
@@ -176,46 +177,46 @@
     ];
   };
 
-  virtualisation.oci-containers.containers."esphome" = {
-    image = "ghcr.io/esphome/esphome:2025.2.0";
-    environment = {
-      "ESPHOME_DASHBOARD_USE_PING" = "true";
-    };
-    volumes = [
-      "/var/lib/esphome:/config"
-    ];
-    log-driver = "journald";
-    extraOptions = [
-      "--network=host"
-      "--privileged"
-    ];
-    #ports = ["0.0.0.0:6052:6052"]; 
-  };
+  # virtualisation.oci-containers.containers."esphome" = {
+  #   image = "ghcr.io/esphome/esphome:2025.2.0";
+  #   environment = {
+  #     "ESPHOME_DASHBOARD_USE_PING" = "true";
+  #   };
+  #   volumes = [
+  #     "/var/lib/esphome:/config"
+  #   ];
+  #   log-driver = "journald";
+  #   extraOptions = [
+  #     "--network=host"
+  #     "--privileged"
+  #   ];
+  #   #ports = ["0.0.0.0:6052:6052"]; 
+  # };
 
-  services.home-assistant = {
-    enable = true;
-    openFirewall = true;
-    extraComponents = [
-      # Components required to complete the onboarding
-      "analytics"
-      "esphome"
-      "google_translate"
-      "met"
-      "shopping_list"
-      # Recommended for fast zlib compression
-      "isal"
-    ];
-    config = {
-      # Includes dependencies for a basic setup
-      # https://www.home-assistant.io/integrations/default_config/
-      default_config = { };
-      http = {
-        server_host = "0.0.0.0";
-        #  trusted_proxies = [ "::" ];
-        #  use_x_forwarded_for = true;
-      };
-    };
-  };
+  # services.home-assistant = {
+  #   enable = true;
+  #   openFirewall = true;
+  #   extraComponents = [
+  #     # Components required to complete the onboarding
+  #     "analytics"
+  #     "esphome"
+  #     "google_translate"
+  #     "met"
+  #     "shopping_list"
+  #     # Recommended for fast zlib compression
+  #     "isal"
+  #   ];
+  #   config = {
+  #     # Includes dependencies for a basic setup
+  #     # https://www.home-assistant.io/integrations/default_config/
+  #     default_config = { };
+  #     http = {
+  #       server_host = "0.0.0.0";
+  #       #  trusted_proxies = [ "::" ];
+  #       #  use_x_forwarded_for = true;
+  #     };
+  #   };
+  # };
 
   #services.nginx = {
   #  recommendedProxySettings = true;
