@@ -12,7 +12,8 @@ in {
     # Include the results of the hardware scan.
     ../hardware-configurations/hardware-configuration_dell_dg.nix
     ../GUI/gnome.nix
-    ../packages/nvf-configuration.nix
+    #../GUI/openbox.nix
+    # ../packages/nvf-configuration.nix
     ../packages/edr.nix
     ../system/suspend-and-hibernate.nix
   ];
@@ -69,7 +70,6 @@ in {
   i18n.defaultLocale = "en_US.UTF-8";
   networking.hostName = "DG-BYOD-9364";
   virtualisation.docker.enable = true;
-  fonts.packages = with pkgs; [nerdfonts corefonts];
 
   # Nixpkgs setup
   nixpkgs.config = {
@@ -103,17 +103,17 @@ in {
   # Graphics setup
   # #
   # Enable OpenGL
-  hardware.graphics = {enable = true;};
+  # hardware.graphics = {enable = true;};
   # Load nvidia driver for Xorg and Wayland
-  services.xserver.videoDrivers = ["nvidia"];
-  hardware.nvidia = {
-    modesetting.enable = true;
-    powerManagement.enable = false;
-    powerManagement.finegrained = false;
-    open = false;
-    nvidiaSettings = true;
-    package = config.boot.kernelPackages.nvidiaPackages.stable;
-  };
+  # services.xserver.videoDrivers = ["nvidia"];
+  # hardware.nvidia = {
+  #   modesetting.enable = true;
+  #   powerManagement.enable = false;
+  #   powerManagement.finegrained = false;
+  #   open = false;
+  #   nvidiaSettings = true;
+  #   package = config.boot.kernelPackages.nvidiaPackages.stable;
+  # };
 
   # #
   # Services
@@ -134,6 +134,11 @@ in {
   services.udisks2.enable = true;
   systemd.packages = [pritunl-client-mvr];
   systemd.targets.multi-user.wants = ["pritunl-client.service"];
+  networking.networkmanager.enable = true;
+  services.tailscale.enable = true;
+  # Enable the OpenSSH daemon.
+  services.openssh.enable = true;
+  services.openssh.settings.X11Forwarding = true;
 
   # EDR setup
   programs.nix-ld.enable = true;
@@ -206,7 +211,7 @@ in {
 
       ## C scharf
       (with pkgs.dotnetCorePackages;
-          combinePackages [sdk_8_0 sdk_9_0 sdk_9_0_1xx sdk_9_0_2xx])
+          combinePackages [sdk_8_0 sdk_9_0 sdk_9_0_1xx sdk_9_0_2xx dotnet_10.sdk])
 
       # postgres
       postgresql
@@ -281,7 +286,6 @@ in {
       kubernetes-helm
       terraform
       corepack
-      nodejs_23
       node-gyp
       (import inputs.nixpkgsunstable {inherit system;}).poetry
       unixODBC
