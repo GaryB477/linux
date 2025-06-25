@@ -229,6 +229,8 @@ in {
       geekbench_5
 
       # Terminal
+      vim
+      neovim
       gh # GitHub cli
       git
       gitui

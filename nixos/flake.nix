@@ -12,8 +12,7 @@
       # Optional but recommended to limit the size of your system closure.
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    dg-cli.url = "git+ssh://git@ssh.dev.azure.com/v3/DigitecGalaxus/devinite/Dg.Cli?ref=main";
-    # dg-cli.url = "git+ssh://git@github.com/DigitecGalaxus/Dg.Cli-Nix?ref=main";
+    dg-cli.url = "git+ssh://git@github.com/DigitecGalaxus/Dg.Cli?ref=main";
   };
 
   outputs = { self, nixpkgs, nvf, lanzaboote, ... }@inputs: {
