@@ -2,9 +2,9 @@
 	"folders": [
 		{
 			"path": "."
-		},
+		}, 
 		{
-			"path": "../../../digitec/Dg.Cli-Nix"
+			"path": "../../../../dotfiles"
 		}
 	],
 	"settings": {}

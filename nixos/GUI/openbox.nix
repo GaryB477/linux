@@ -8,6 +8,7 @@
   services.xserver = {
     enable = true;
     xkb = {layout = "ch";};
+    displayManager.startx.enable = true;
     displayManager.lightdm = {
       enable = true;
       greeter.enable = true;
@@ -16,15 +17,15 @@
     windowManager.openbox.enable = true;
   };
 
-  #services.autorandr = {
-  #enable = true;
-  # Usage: create setup as desired with xrandr.
-  # E.g.:
-  # `xrandr --output HDMI-0 --mode 3840x2160 --rate 120`
-  # `xrandr --output DP-0 --mode 2560x1440 --rate 120 --rotate left`
-  # Then be sure to updte the config in the dotfiles repo
-  #};
+  services.autorandr = {
+    enable = true;
+  };
   security.polkit.enable = true;
+
+  hardware.bluetooth.enable = true; # enables support for Bluetooth
+  hardware.bluetooth.powerOnBoot = true; # powers up the default Bluetooth controller on boot
+  # hardware.pulseaudio.enable = true;
+  services.blueman.enable = true;
 
   users.users.marc = {
     packages = with pkgs; [
@@ -39,9 +40,17 @@
       autorandr
       arandr
       polkit
-      feh
+      feh # Wallpaper setter
+      libsForQt5.spectacle # Screenshot utility
 
-      picom
+      dunst # Notification daemon
+      picom # Compositor for Openbox
+      xsecurelock  # Screen locker
+      feh # Wallpaper setter
+
+      bluez # Bluetooth utility
+      blueman
+      pavucontrol
     ];
   };
 }

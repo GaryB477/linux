@@ -13,6 +13,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     dg-cli.url = "git+ssh://git@github.com/DigitecGalaxus/Dg.Cli?ref=main";
+
   };
 
   outputs = { self, nixpkgs, nvf, lanzaboote, ... }@inputs: {

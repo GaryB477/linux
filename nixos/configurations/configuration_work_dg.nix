@@ -9,10 +9,10 @@
   unstable = inputs.nixpkgsunstable;
 in {
   imports = [
-    # Include the results of the hardware scan.
+    # Include the results of the hardware tomcan.
     ../hardware-configurations/hardware-configuration_dell_dg.nix
-    ../GUI/gnome.nix
-    #../GUI/openbox.nix
+    # ../GUI/gnome.nix
+    ../GUI/openbox.nix
     # ../packages/nvf-configuration.nix
     ../packages/edr.nix
     ../system/suspend-and-hibernate.nix
@@ -25,6 +25,7 @@ in {
   # acpid
   services.acpid = {enable = true;};
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
   # Lanzaboote currently replaces the systemd-boot module.
   # This setting is usually set to true in configuration.nix
   # generated at installation time. So we force it to false
@@ -74,14 +75,11 @@ in {
   # Nixpkgs setup
   nixpkgs.config = {
     allowUnfree = true;
-    permittedInsecurePackages = [
-      "openssl-1.1.1w" # for sublime4
-      "nodejs-14.21.3"
-      "openssl-1.1.1u"
-      "electron-13.6.9"
-      "qtwebkit-5.212.0-alpha4"
-    ];
   };
+
+  #(import inputs.nixpkgsunstable {inherit system;}).config = {
+  #  allowUnfree = true;
+  #};
 
   # Console
   console = {useXkbConfig = true;};
@@ -96,7 +94,7 @@ in {
   };
   environment.shells = with pkgs; [zsh];
   environment.sessionVariables = {
-    DOTNET_ROOT = "${pkgs.dotnetCorePackages.sdk_9_0_2xx}/share/dotnet";
+    DOTNET_ROOT = "${pkgs.dotnetCorePackages.sdk_9_0_3xx}/share/dotnet";
   };
 
   # #
@@ -120,7 +118,6 @@ in {
   # #
   services.printing.enable = true;
   services.hardware.bolt.enable = true;
-  hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -139,12 +136,30 @@ in {
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
   services.openssh.settings.X11Forwarding = true;
+  services.thermald.enable = true;
+  # Power management for laptop use
+  services.auto-cpufreq.enable = true;
+  services.auto-cpufreq.settings = {
+    battery = {
+      governor = "powersave";
+      turbo = "never";
+    };
+    charger = {
+      governor = "performance";
+      turbo = "auto";
+    };
+  };
 
   # EDR setup
   programs.nix-ld.enable = true;
   edr.nix-alien-pkg = inputs.nix-alien.packages."${pkgs.system}".nix-alien;
 
-  environment.systemPackages = with pkgs; [(python310.withPackages (ps: with ps; [pandas numpy gyp psutil]))];
+  environment.systemPackages = with pkgs; [(python310.withPackages (ps: with ps; [pandas numpy gyp psutil pytz]))];
+
+  programs.git = {
+    enable = true;
+    lfs.enable = true;
+  };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.marc = {
@@ -181,6 +196,7 @@ in {
       remmina
       pulseaudio
       gitkraken
+      lazygit
       gimp
       docker
       docker-compose
@@ -191,6 +207,7 @@ in {
       glxinfo
       kooha
       jetbrains-toolbox
+      jetbrains.rider
       dpkg
 
       # Development environment
@@ -203,15 +220,20 @@ in {
       pmutils # A small collection of scripts that handle suspend and resume on behalf of HAL
       nixfmt-classic
 
-      ## Kubernetes
+      ## Kubernetes and friends
       kubectl
       kubernetes
       minikube
+      k9s
       google-cloud-sdk
+      (google-cloud-sdk.withExtraComponents [ google-cloud-sdk.components.gke-gcloud-auth-plugin ])
 
       ## C scharf
-      (with pkgs.dotnetCorePackages;
-          combinePackages [sdk_8_0 sdk_9_0 sdk_9_0_1xx sdk_9_0_2xx dotnet_10.sdk])
+      # Remove package "dotnet_10.sdk" since it caused horribly long build times
+      # Note: We use the unstable version of dotnetCorePackages, since it has the latest versions of the SDKs 
+      # and we can update this (nixpkgsunstable) flake separately which reduces rebuild time.
+      (with (import inputs.nixpkgsunstable {inherit system;}).dotnetCorePackages;
+          combinePackages [sdk_8_0 sdk_9_0 sdk_9_0_1xx sdk_9_0_3xx])
 
       # postgres
       postgresql
@@ -223,6 +245,9 @@ in {
       gnumake
       doxygen
 
+      # Web stuff
+      nodejs_24
+
       # Power management testing
       powertop
       stress
@@ -232,7 +257,7 @@ in {
       vim
       neovim
       gh # GitHub cli
-      git
+      git-filter-repo
       gitui
       gitg
       btop
@@ -262,8 +287,10 @@ in {
       socat
       stow # GNU stow for managing symlinked dot files
       copyq # Clipboard manager. Should help in case some app does store to a differen registry insead of using the global one...
+      ncdu # Find big folders via terminal
 
       # General stuff
+      #(import inputs.nixpkgsunstable {inherit system;}).google-chrome does not work, since needs allowed unfree
       google-chrome
       firefox
       _1password-gui
@@ -275,7 +302,7 @@ in {
       nemo-with-extensions
       evince # default gnome pdf viewer
       udisks # automount usb sticks
-
+      wsdd # Try to fix errors in journalctl log and vscode / chrome which take forever to load.. May be removed later
       # Work specific
       inputs.dg-cli.packages.${system}.default
       inputs.nix-alien.packages."${pkgs.system}".nix-alien
