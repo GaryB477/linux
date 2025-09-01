@@ -193,46 +193,6 @@
   #   #ports = ["0.0.0.0:6052:6052"]; 
   # };
 
-  # services.home-assistant = {
-  #   enable = true;
-  #   openFirewall = true;
-  #   extraComponents = [
-  #     # Components required to complete the onboarding
-  #     "analytics"
-  #     "esphome"
-  #     "google_translate"
-  #     "met"
-  #     "shopping_list"
-  #     # Recommended for fast zlib compression
-  #     "isal"
-  #   ];
-  #   config = {
-  #     # Includes dependencies for a basic setup
-  #     # https://www.home-assistant.io/integrations/default_config/
-  #     default_config = { };
-  #     http = {
-  #       server_host = "0.0.0.0";
-  #       #  trusted_proxies = [ "::" ];
-  #       #  use_x_forwarded_for = true;
-  #     };
-  #   };
-  # };
-
-  #services.nginx = {
-  #  recommendedProxySettings = true;
-  #  virtualHosts."home.example.com" = {
-  #    forceSSL = true;
-  #    enableACME = true;
-  #    extraConfig = ''
-  #      proxy_buffering off;
-  #    '';
-  #    locations."/" = {
-  #      proxyPass = "http://[::1]:8123";
-  #      proxyWebsockets = true;
-  #    };
-  #  };
-  #};
-
   users.groups.media = { };
   users.groups.media.members = [ "sonarr" "radarr" "bazarr" "jackett" "plex" ];
 
