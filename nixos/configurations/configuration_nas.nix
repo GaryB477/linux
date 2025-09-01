@@ -3,7 +3,6 @@
 {
   imports = [ # Include the results of the hardware scan.
     ../hardware-configurations/hardware-configuration_nas.nix
-    ../packages/qbittorrent.nix
     ../packages/r-suite_services.nix
     ../packages/homepage.nix
     ../packages/home-assistant-vm.nix
@@ -112,7 +111,6 @@
       jellyseerr
 
       ## Downloader
-      qbittorrent
       sabnzbd
 
       ## Streaming

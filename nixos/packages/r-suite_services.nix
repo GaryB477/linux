@@ -5,6 +5,7 @@ let
   };
 in 
 {
+  imports = [ ./qbittorrent.nix ];
   # port 8989 
   services.sonarr = {
     dataDir = "/var/lib/download/sonarr/.config/NzbDrone";
