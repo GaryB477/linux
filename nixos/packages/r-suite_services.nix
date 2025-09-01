@@ -59,7 +59,6 @@ in
 
   # inputs.nixpkgsunstable.config.allowUnfree = true;
   services.plex = {
-    #package = unstable.legacyPackages.${pkgs.system}.plex;
     package = unstable.plex;
     dataDir = "/var/lib/download/plex";
     enable = true;
