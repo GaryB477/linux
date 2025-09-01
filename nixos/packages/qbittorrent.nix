@@ -3,12 +3,12 @@
 with lib;
 
 let
-  cfg = config.services.qbittorrent;
+  cfg = config.services.qbittorrent_custom;
   UID = 888;
   GID = 888;
 in
 {
-  options.services.qbittorrent = {
+  options.services.qbittorrent_custom = {
     enable = mkEnableOption (lib.mdDoc "qBittorrent headless");
 
     dataDir = mkOption {
@@ -66,7 +66,7 @@ in
       allowedTCPPorts = [ cfg.port ];
     };
 
-    systemd.services.qbittorrent = {
+    systemd.services.qbittorrent_custom = {
       # based on the plex.nix service module and
       # https://github.com/qbittorrent/qBittorrent/blob/master/dist/unix/systemd/qbittorrent-nox%40.service.in
       description = "qBittorrent-nox service";

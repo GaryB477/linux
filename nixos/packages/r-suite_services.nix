@@ -47,7 +47,7 @@ in
     user = "marc";
   };
 
-  services.qbittorrent = {
+  services.qbittorrent_custom = {
     dataDir = "/var/lib/download/";
     enable = true;
     openFirewall = true;
