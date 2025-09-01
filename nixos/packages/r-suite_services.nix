@@ -6,6 +6,32 @@ let
 in 
 {
   imports = [ ./qbittorrent.nix ];
+
+  # Enable Docker for running additional containers
+  virtualisation.docker.enable = true;
+  
+  # Setup Requestrr container
+  virtualisation.oci-containers = {
+    backend = "docker";
+    containers = {
+      # port 4545
+      requestrr = {
+        image = "thomst08/requestrr";
+        ports = ["4545:4545"];
+        volumes = [
+          "/var/lib/download/requestrr/config:/root/config"
+        ];
+        autoStart = true;
+        # extraOptions = [
+        #   "--restart=unless-stopped"
+        # ];
+      };
+    };
+  };
+
+  # Add user to docker group
+  users.users.marc.extraGroups = [ "docker" ];
+
   # port 8989 
   services.sonarr = {
     dataDir = "/var/lib/download/sonarr/.config/NzbDrone";
