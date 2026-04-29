@@ -84,7 +84,7 @@
   users.users.marc = {
     isNormalUser = true;
     description = "Marc Röthlisberger";
-    extraGroups = [ "networkmanager" "wheel" "docker" "media" ];
+    extraGroups = [ "networkmanager" "wheel" "docker" "media" "timemachine" ];
 
     packages = with pkgs; [
 
@@ -157,6 +157,14 @@
         "securityType" = "user";
         "server string" = "smbnix";
         "netbios name" = "smbnix";
+        # macOS/Time Machine compatibility (vfs_fruit)
+        "vfs objects" = "catia fruit streams_xattr";
+        "fruit:metadata" = "stream";
+        "fruit:model" = "MacSamba";
+        "fruit:posix_rename" = "yes";
+        "fruit:veto_appledouble" = "no";
+        "fruit:wipe_intentionally_left_blank_rfork" = "yes";
+        "fruit:delete_empty_adfiles" = "yes";
       };
       raid = { # <-- Name of the share!
         path = "/raid";
@@ -168,8 +176,53 @@
         #"force user" = "username";
         #"force group" = "groupname";
       };
+      timemachine = {
+        path = "/raid/timemachine-backup";
+        "valid users" = "@timemachine";
+        browseable = "no";
+        "read only" = "no";
+        "create mask" = "0600";
+        "directory mask" = "0700";
+        "fruit:time machine" = "yes";
+      };
     };
   };
+
+  # Bonjour/mDNS so macOS clients discover the Time Machine share automatically
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+    publish = {
+      enable = true;
+      addresses = true;
+      workstation = true;
+    };
+    extraServiceFiles = {
+      timemachine = ''
+        <?xml version="1.0" standalone='no'?>
+        <!DOCTYPE service-group SYSTEM "avahi-service.dtd">
+        <service-group>
+          <name replace-wildcards="yes">%h</name>
+          <service>
+            <type>_adisk._tcp</type>
+            <txt-record>sys=waMa=0,adVF=0x100</txt-record>
+            <txt-record>dk0=adVN=TimeMachine,adVF=0x82</txt-record>
+          </service>
+          <service>
+            <type>_smb._tcp</type>
+            <port>445</port>
+          </service>
+        </service-group>
+      '';
+    };
+  };
+
+  # Time Machine backup directory with correct permissions
+  systemd.tmpfiles.rules = [
+    "d /raid/timemachine-backup 0770 root timemachine -"
+  ];
+
+  users.groups.timemachine = {};
 
   # Enable cron service
   services.cron = {
