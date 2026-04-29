@@ -2,7 +2,7 @@
   description = "A simple NixOS flake";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixpkgsunstable.url = "github:nixos/nixpkgs/nixos-unstable";
     nvf.url = "github:notashelf/nvf";
     nix-alien.url = "github:thiagokokada/nix-alien";
@@ -12,8 +12,6 @@
       # Optional but recommended to limit the size of your system closure.
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    dg-cli.url = "git+ssh://git@github.com/DigitecGalaxus/Dg.Cli?ref=main";
-
   };
 
   outputs = { self, nixpkgs, nvf, lanzaboote, ... }@inputs: {

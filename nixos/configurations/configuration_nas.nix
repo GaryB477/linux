@@ -100,6 +100,7 @@
       borgbackup
       nixfmt-classic
       nmap
+      lazygit
 
       esphome
 
@@ -118,6 +119,9 @@
 
       # File synthing
       syncthing
+
+      # Clanker
+      claude-code
     ];
   };
 
